@@ -11,6 +11,8 @@ var ok =  $.ajax({
  
 }
 
+
+
 function getThePrices(param) {
    
     
@@ -110,4 +112,9 @@ function postAjax(url, paramsObj, successCallback, failCallback) {
             ErrorMessage.show(JSON.parse(jqXHR.responseText).JsonResult);
         }
     });
+}
+
+
+function saveForm() {
+    saveFormData($("#TradingForm"))
 }

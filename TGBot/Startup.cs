@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TGBot.Helper;
 
 namespace TGBot
 {
@@ -24,6 +25,9 @@ namespace TGBot
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+
+            services.AddHelpers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
