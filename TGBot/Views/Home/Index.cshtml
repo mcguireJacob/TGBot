@@ -1,0 +1,67 @@
+﻿
+
+<div class="row">
+
+    <div class="col-lg-4">
+        <label>Trade Type</label>
+        <select id="TradeTypeSelect" class="form-control" onchange="tradeTypeChange()">
+            <option>Please Select</option>
+            <option value="1">Buy Now</option>
+        </select>
+    </div>
+
+    <div class="col-lg-4">
+        <input type="hidden" id="ajacall" value="@Url.Action("getResults")" />
+        <label>Trading Pair</label>
+        <select id="tradingPair" class="form-control" onchange="callForPrice()">
+            <option>Please Select</option>
+            <option value="1">EurUsd</option>
+            <option value="2">AudJpy</option>
+        </select>
+    </div>
+
+</div>
+<div class="row">
+    <div class="col-lg-4">
+        <label>Stop Loss</label>
+        <input class="form-control" type="number" id="StopLossInput" onkeyup="StopLoss()" placeholder="SL" />
+    </div>
+    <div class="col-lg-4">
+        <label>Take Profit</label>
+        <input class="form-control" type="number" id="TakeProfitInput" onkeyup="TakeProfit()" placeholder="TP" />
+    </div>
+</div>
+
+
+<br />
+
+<br />
+
+<div><button type="button" class="btn btn-primary" onclick="fuckingTelegram()">Send Message to Telegram</button></div>
+
+<br />
+<br />
+
+<div class="row">
+    <div class="col-lg-12">
+        <label id="TradeType"></label>
+    </div>
+</div>
+
+<div class="row" id="ConstructMessage">
+    <div class="col-lg-12">
+        <label id="TextOfSelected"></label>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-lg-12">
+        <label id="StopLoss"></label>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <label id="TakeProfit"></label>
+    </div>
+</div>
