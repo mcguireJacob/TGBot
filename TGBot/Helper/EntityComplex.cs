@@ -14,8 +14,8 @@ namespace TGBot.Helper
         /// <summary>
         /// Dependencies
         /// </summary>
-        private readonly db AppSettings;
-        
+
+        private  db AppSettings;
 
         /// <summary>
         /// Constructor for DI
@@ -38,6 +38,7 @@ namespace TGBot.Helper
         /// <returns></returns>
         public List<T> ExecProc<T>(string procName, List<SqlParameter> parameters, string databaseName = null)
         {
+            
             List<T> retList = new List<T>();
 
             List<IDictionary<string, object>> temp = new List<IDictionary<string, object>>();
@@ -48,6 +49,10 @@ namespace TGBot.Helper
             {
                 if (string.IsNullOrEmpty(databaseName))
                 {
+                    if(AppSettings.ConnectionStrings.ConnectionString == "")
+                    {
+                        AppSettings = new db();
+                    }
                     SqlConnection = AppSettings.ConnectionStrings;
                 }
                 

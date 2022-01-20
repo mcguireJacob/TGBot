@@ -4,7 +4,7 @@ using System.Data.SqlClient;
 using JSON = Newtonsoft.Json.JsonConvert;
 using TGBot.Helper;
 
-//AUTO-GENERATED 1/14/2022 at 10:39 PM
+//AUTO-GENERATED 1/19/2022 at 10:04 PM
 //DO NOT ALTER THIS FILE
 //EXTEND THE CLASS IN A NEW PARTIAL CLASS INSTEAD
 namespace TGBot
@@ -22,11 +22,12 @@ namespace TGBot
 		public decimal? tLimitTwo { get; set; }
 		public decimal? tSL { get; set; }
 		public decimal? tTp { get; set; }
-		public bool? tHitSl { get; set; }
-		public bool? tHitTp { get; set; }
+		public bool tHitSl { get; set; }
+		public bool tHitTp { get; set; }
 		public DateTime? tTimePlaced { get; set; }
 		public DateTime? tTradeClosed { get; set; }
-		public bool? tManuallyClosed { get; set; }
+		public bool tManuallyClosed { get; set; }
+		public int tTelegramMessageID { get; set; }
 
 
 		/// <summary>

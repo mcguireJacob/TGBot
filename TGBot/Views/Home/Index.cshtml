@@ -1,33 +1,38 @@
-﻿<form id="TradingForm" action="">
+﻿<form id="TradingForm" action="@Url.Action("SaveTheTrade")">
     <div class="row">
 
         <div class="col-lg-4">
             <label>Trade Type</label>
-            <select id="TradeTypeSelect" class="form-control" onchange="tradeTypeChange()">
-                <option>Please Select</option>
+            <select id="TradeTypeSelect" class="form-control"  onchange="tradeTypeChange()">
+                <option >Please Select</option>
                 <option value="1">Buy Now</option>
+                <option value="2">Sell Now</option>
+                <option value="3">Buy Limit</option>
+                <option value="4">Sell Limit</option>
+                
             </select>
         </div>
 
         <div class="col-lg-4">
             <input type="hidden" id="ajacall" value="@Url.Action("getResults")" />
+            <input hidden id="getPricey"  value="@Url.Action("GetPriceOfSelected")"/>
             <label>Trading Pair</label>
-            <select id="tradingPair" class="form-control" onchange="callForPrice()">
-                <option>Please Select</option>
+            <select id="tradingPair" class="form-control" name="tTradingPair" onchange="callForPrice()">
+                <option value="10">Please Select</option>
                 <option value="1">EurUsd</option>
                 <option value="2">AudJpy</option>
             </select>
         </div>
-
+        <input hidden id="currentPrice" name="tCurrentPrice" />
     </div>
     <div class="row">
         <div class="col-lg-4">
             <label>Stop Loss</label>
-            <input class="form-control" type="number" id="StopLossInput" onkeyup="StopLoss()" placeholder="SL" />
+            <input class="form-control" type="number" id="StopLossInput" name="tSL" onkeyup="StopLoss()" placeholder="SL" />
         </div>
         <div class="col-lg-4">
             <label>Take Profit</label>
-            <input class="form-control" type="number" id="TakeProfitInput" onkeyup="TakeProfit()" placeholder="TP" />
+            <input class="form-control" type="number" id="TakeProfitInput" name="tTp" onkeyup="TakeProfit()" placeholder="TP" />
         </div>
     </div>
 </form>
@@ -40,30 +45,56 @@
 <br />
 
 <div><button type="button" class="btn btn-primary" onclick="fuckingTelegram()">Send Message to Telegram</button></div>
+<div><button type="button" class="btn btn-primary" onclick="testAjaxStuff()">Reply Message to Telegram</button></div>
 
 <br />
 <br />
 
 <div class="row">
     <div class="col-lg-12">
-        <label id="TradeType"></label>
+        <label id="TradeType" class="editable" contenteditable="true"></label>
     </div>
 </div>
 
 <div class="row" id="ConstructMessage">
     <div class="col-lg-12">
-        <label id="TextOfSelected"></label>
+        <label id="TextOfSelected" class="editable" contenteditable="true"></label>
     </div>
 </div>
 <br />
+
+
+
+
 <div class="row">
     <div class="col-lg-12">
-        <label id="StopLoss"></label>
+        <label id="StopLoss" class="editable" contenteditable="true"></label>
     </div>
 </div>
 
 <div class="row">
     <div class="col-lg-12">
-        <label id="TakeProfit"></label>
+        <label id="TakeProfit" class="editable" contenteditable="true"></label>
     </div>
 </div>
+
+
+<div class="row">
+    <div class="col-lg-12">
+        <label class="editable" contenteditable="true">Additional Text Here</label>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+<style>
+    .editable:hover {
+        box-shadow: 0 0 2px blue;
+    }
+</style>

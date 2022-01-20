@@ -10,7 +10,7 @@ namespace TGBot.Models
 {
     public class db
     {
-        public SqlConnection ConnectionStrings;
+        public SqlConnection ConnectionStrings { get; set; } 
 
         public db()
         {

@@ -4,7 +4,7 @@ using System.Data.SqlClient;
 using JSON = Newtonsoft.Json.JsonConvert;
 using TGBot.Helper;
 
-//AUTO-GENERATED 1/14/2022 at 10:40 PM
+//AUTO-GENERATED 1/19/2022 at 10:04 PM
 //DO NOT ALTER THIS FILE
 //EXTEND THE CLASS IN A NEW PARTIAL CLASS INSTEAD
 namespace TGBot
@@ -22,11 +22,11 @@ namespace TGBot
 		public decimal? tLimitTwo { get; set; }
 		public decimal? tSL { get; set; }
 		public decimal? tTp { get; set; }
-		public bool? tHitSl { get; set; }
-		public bool? tHitTp { get; set; }
+		public bool tHitSl { get; set; }
+		public bool tHitTp { get; set; }
 		public DateTime? tTimePlaced { get; set; }
 		public DateTime? tTradeClosed { get; set; }
-		public bool? tManuallyClosed { get; set; }
+		public bool tManuallyClosed { get; set; }
 
 
 		/// <summary>
@@ -47,6 +47,7 @@ namespace TGBot
 			public DateTime? tTimePlaced { get; set; }
 			public DateTime? tTradeClosed { get; set; }
 			public bool? tManuallyClosed { get; set; }
+			public int? tTelegramMessageID { get; set; }
 			
 			/// <summary>
 			/// Call to create new TradeInfo_Set_Result.Parameters from a json string
@@ -76,7 +77,8 @@ namespace TGBot
 		/// <param name="tTimePlaced">DateTime?</param>
 		/// <param name="tTradeClosed">DateTime?</param>
 		/// <param name="tManuallyClosed">bool?</param>
-		public static List<TradeInfo_Set_Result> TradeInfo_Set(this ComplexEntity ctx, int? tID, int? tTradeType, int? tTradingPair, decimal? tCurrentPrice, decimal? tLimitOne, decimal? tLimitTwo, decimal? tSL, decimal? tTp, bool? tHitSl, bool? tHitTp, DateTime? tTimePlaced, DateTime? tTradeClosed, bool? tManuallyClosed)
+		/// <param name="tTelegramMessageID">int?</param>
+		public static List<TradeInfo_Set_Result> TradeInfo_Set(this ComplexEntity ctx, int? tID, int? tTradeType, int? tTradingPair, decimal? tCurrentPrice, decimal? tLimitOne, decimal? tLimitTwo, decimal? tSL, decimal? tTp, bool? tHitSl, bool? tHitTp, DateTime? tTimePlaced, DateTime? tTradeClosed, bool? tManuallyClosed, int? tTelegramMessageID)
 		{
 			List<TradeInfo_Set_Result> x = new List<TradeInfo_Set_Result>();
 			 List<SqlParameter> sqlParams = new List<SqlParameter>();
@@ -146,6 +148,11 @@ namespace TGBot
 				sqlParams.Add(new SqlParameter("@tManuallyClosed", tManuallyClosed));
 			}
 			
+			if (tTelegramMessageID.HasValue)
+			{
+				sqlParams.Add(new SqlParameter("@tTelegramMessageID", tTelegramMessageID));
+			}
+			
 			x = ctx.ExecProc<TradeInfo_Set_Result>("TradeInfo_Set", sqlParams);
 			
 			return x;
@@ -158,7 +165,7 @@ namespace TGBot
 		/// <param name="pars">TradeInfo_Set.Parameters</param>
 		public static List<TradeInfo_Set_Result> TradeInfo_Set(this ComplexEntity ctx, TradeInfo_Set_Result.Parameters pars)
 		{
-			return ctx.TradeInfo_Set(tID: pars.tID , tTradeType: pars.tTradeType , tTradingPair: pars.tTradingPair , tCurrentPrice: pars.tCurrentPrice , tLimitOne: pars.tLimitOne , tLimitTwo: pars.tLimitTwo , tSL: pars.tSL , tTp: pars.tTp , tHitSl: pars.tHitSl , tHitTp: pars.tHitTp , tTimePlaced: pars.tTimePlaced , tTradeClosed: pars.tTradeClosed , tManuallyClosed: pars.tManuallyClosed );
+			return ctx.TradeInfo_Set(tID: pars.tID , tTradeType: pars.tTradeType , tTradingPair: pars.tTradingPair , tCurrentPrice: pars.tCurrentPrice , tLimitOne: pars.tLimitOne , tLimitTwo: pars.tLimitTwo , tSL: pars.tSL , tTp: pars.tTp , tHitSl: pars.tHitSl , tHitTp: pars.tHitTp , tTimePlaced: pars.tTimePlaced , tTradeClosed: pars.tTradeClosed , tManuallyClosed: pars.tManuallyClosed , tTelegramMessageID: pars.tTelegramMessageID );
 		}
 	}
 }

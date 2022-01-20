@@ -1,30 +1,36 @@
 ﻿
-async function callForPrice() {
-var ok =  $.ajax({
-    url: "https://yfapi.net/v6/finance/quote?region=US&lang=en&symbols=EURUSD%3DX",
-        headers: { 'x-api-key': '6CxtVp2Ng73DYJsDMlwQi7e7TMo9LTjB5QXTlmG7' },
-        paramsObj: { modules: 'defaultKeyStatistics,assetProfile' }
-})
 
-    await ok;
-    getThePrices(ok)
- 
+ function callForPrice() {
+     var selected = $("#tradingPair").val();
+     //postAjax($("#getPricey").val(), {id: selected},
+     //   function (data) {
+     //       getThePrices(data)
+     //    })
+
+     NK.Ajax.post($("#getPricey").val(),
+         { id: selected },
+         function (data) {
+             getThePrices(data)
+         },
+         function () {
+             console.log("DIDNT WORK")
+         }
+     )
 }
 
 
 
 function getThePrices(param) {
-   
-    
-    console.log(JSON.parse(param.responseText).quoteResponse.result[0].regularMarketPrice);
-    
-    var priceOfSelected = JSON.parse(param.responseText).quoteResponse.result[0].regularMarketPrice;
-
+  
     var selected = $("#tradingPair").val();
 
     if (selected == 1) {
-        $("#TextOfSelected").text("🔻EurUsd " +  priceOfSelected)
+        $("#TextOfSelected").text("🔻EurUsd " +  param)
     }
+
+   
+
+    $("#currentPrice").val(param)
     
 }
 
@@ -35,19 +41,48 @@ function fuckingTelegram() {
     var sl = $("#StopLoss").text()
     var tp = $("#TakeProfit").text()
     var message = tradeType + "%0D%0A" + pair + "%0D%0A %0D%0A" + sl + "%0D%0A" + tp;
-    postAjax('https://api.telegram.org/bot5074478768:AAGgm7gcHeySMXo13qhw3fwwYHxx1F7S6eg/sendMessage?chat_id=@ShitTradinBot&text=' + message);
+    var telegram = postAjax('https://api.telegram.org/bot5074478768:AAGgm7gcHeySMXo13qhw3fwwYHxx1F7S6eg/sendMessage?chat_id=@ShitTradinBot&text=' + message, {},
+        function (data) {
+            console.log(data.result.message_id);
+            saveForm(data.result.message_id)
+        }
+    );
+    
+    
+    
 
 }
 
+
+function testAjaxStuff() {
+    postAjax('https://api.telegram.org/bot5074478768:AAGgm7gcHeySMXo13qhw3fwwYHxx1F7S6eg/sendMessage?chat_id=@ShitTradinBot&reply_to_message_id=862&text=hello')
+}
 
 
 
 function tradeTypeChange() {
     var selected = $("#TradeTypeSelect").val();
 
-    if (selected == 1) {
-        $("#TradeType").text("Buy Now");
+    
+
+    switch (selected) {
+        case "Please Select":
+            $("#TradeType").text("");
+            break;
+        case '1':
+            $("#TradeType").text("📈Buy Now");
+            break;
+        case '2':
+            $("#TradeType").text("📉Sell Now");
+            break;
+        case '3':
+            $("#TradeType").text("📈Buy Limit");
+            break;
+        case '4':
+            $("#TradeType").text("📉Sell Limit");
+            break;
     }
+    
 }
 
 
@@ -83,38 +118,34 @@ function TakeProfit() {
 
 
 
-function postAjax(url, paramsObj, successCallback, failCallback) {
-    $.ajax({
-        url: url,
-        type: "post",
-        cache: false,
-        data: { passData: JSON.stringify(paramsObj) }
-    }).done(function (data) {
-        if (successCallback) {
-            if (typeof data === 'string') {
-                if (data.trim().substring(0, 1) !== '<') {
-                    data = JSON.parse(data);
-                }
-            }
-            successCallback(data);
+
+
+function saveForm(messageID) {
+    var tTradeType = $("#TradeTypeSelect").val()
+    var tTradingPair = $("#tradingPair").val()
+    var tCurrentPrice = $("#currentPrice").val()
+    var tSL = $("#StopLossInput").val()
+    var tTp = $("#TakeProfitInput").val()
+    
+
+    var payload = {
+        tTradeType: tTradeType,
+        tTradingPair: tTradingPair,
+        tCurrentPrice: tCurrentPrice,
+        tSL: tSL,
+        tTp: tTp,
+        tTelegramMessageID: messageID
+    }
+    NK.Ajax.post($("#TradingForm").attr("action"),
+        payload,
+        function () {
+            console.log("it worked")
+        },
+        function () {
+            console.log("DIDNT WORK")
         }
-    }).fail(function (jqXHR, textStatus) {
-        if (failCallback) {
-            var retVal = jqXHR.responseText;
-            if (typeof retVal === 'string') {
-                retVal = JSON.parse(retVal);
-            }
-            if (failCallback) {
-                failCallback(retVal);
-            }
-        } else {
-            //If JsonResult does not exist then you are not using the ReturnArgs object on the .Net side and should use the fail callback to handle the message on your own.
-            ErrorMessage.show(JSON.parse(jqXHR.responseText).JsonResult);
-        }
-    });
+    )
 }
 
 
-function saveForm() {
-    saveFormData($("#TradingForm"))
-}
+

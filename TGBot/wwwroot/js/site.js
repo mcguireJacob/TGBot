@@ -1026,11 +1026,7 @@ var Timer = function (interval, event) {
 
 $(function () {
     $('.auto-fade-in').css({ 'visibility': 'visible', 'display': 'none' }).fadeIn();
-    $('input[datepicker]').datepicker({
-        uiLibrary: 'bootstrap4'
-    }).on('changeDate', function () {
-        $(this).datepicker('hide');
-    });
+    
     /* NetK - JAL - NOT SURE BUT PRODUCING ERROR - 2018-10-26
     $('input[datetimepicker]').datetimepicker({ format: 'yyyy-mm-dd hh:ii' }).on('changeDate', function () {
         $(this).datetimepicker('hide');

@@ -1,0 +1,79 @@
+﻿@model OpenTradesVM
+
+<div class="row">
+    <div class="col-md-2" style="font-weight:bold">
+        Trading Type
+    </div>
+    <div class="col-md-1" style="font-weight:bold">
+        Pair
+    </div>
+    <div class="col-md-2" style="font-weight:bold">
+        Price of Trade
+    </div>
+    <div class="col-md-1" style="font-weight:bold">
+        SL
+    </div>
+    <div class="col-md-1" style="font-weight:bold">
+        TP
+    </div>
+    <div class="col-md-2" style="font-weight:bold">
+        Trade Place (UTC)
+    </div>
+</div>
+
+<input id="ActionToClose" hidden value="@Url.Action("CloseTradeByID", "OpenTrades")" />
+
+@foreach (var trade in Model.OpenTradeList)
+{
+    <div class="row dets">
+        <div class="col-md-2">
+            @foreach (var tradeLookup in Model.TradeTypeLookupList)
+            {
+                if (trade.tTradeType == tradeLookup.lTradeTypeID)
+                {
+                    <label>@tradeLookup.lTrade</label>
+                }
+
+
+            }
+        </div>
+
+        <div class="col-md-1">
+            @foreach (var tradePairLookup in Model.TradePairLookupList)
+            {
+                if (trade.tTradingPair == tradePairLookup.lTradePairLookupID)
+                {
+                    <label>@tradePairLookup.lTradePair</label>
+                }
+            }
+        </div>
+
+        <div class="col-md-2">
+            @trade.tCurrentPrice
+        </div>
+        <div class="col-md-1">
+            @trade.tTp
+        </div>
+        <div class="col-md-1">
+            @trade.tSL
+        </div>
+        <div class="col-md-3">
+            @trade.tTimePlaced
+        </div>
+        <div>
+            <input class="tID" hidden value="@trade.tID" />
+            <a href="#"  onclick="CloseTradeManually($(this))">Close Manually</a>
+        </div>
+
+
+    </div>
+
+}
+
+
+
+<link href="~/css/OpenTrades.css" rel="stylesheet" />
+@section scripts{ 
+
+    <script src="~/js/OpenTrade.js"></script>
+}
