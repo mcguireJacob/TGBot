@@ -22,6 +22,7 @@
 </div>
 
 <input id="ActionToClose" hidden value="@Url.Action("CloseTradeByID", "OpenTrades")" />
+<input id="refreshPage" hidden value="@Url.Action("Index", "OpenTrades")" />
 
 @foreach (var trade in Model.OpenTradeList)
 {
@@ -52,17 +53,17 @@
             @trade.tCurrentPrice
         </div>
         <div class="col-md-1">
-            @trade.tTp
+            @trade.tSL
         </div>
         <div class="col-md-1">
-            @trade.tSL
+            @trade.tTp
         </div>
         <div class="col-md-3">
             @trade.tTimePlaced
         </div>
         <div>
             <input class="tID" hidden value="@trade.tID" />
-            <a href="#"  onclick="CloseTradeManually($(this))">Close Manually</a>
+            <a href="#" class="closeTrade"  onclick="CloseTradeManually($(this))">Close Manually</a>
         </div>
 
 

@@ -15,9 +15,14 @@
 
         <div class="col-lg-4">
             <input type="hidden" id="ajacall" value="@Url.Action("getResults")" />
-            <input hidden id="getPricey"  value="@Url.Action("GetPriceOfSelected")"/>
+            <input hidden id="getPricey" value="@Url.Action("GetPriceOfSelected")" />
             <label>Trading Pair</label>
-            <select id="tradingPair" class="form-control" name="tTradingPair" onchange="callForPrice()">
+            <select id="tradingPair" class="form-control"  style="display:none" onchange="callForPrice($(this))">
+                <option value="10">Please Select</option>
+                <option value="1">EurUsd</option>
+                <option value="2">AudJpy</option>
+            </select>
+            <select id="tradingPairLimit" class="form-control"  onchange="callForPrice($(this))">
                 <option value="10">Please Select</option>
                 <option value="1">EurUsd</option>
                 <option value="2">AudJpy</option>
@@ -44,8 +49,8 @@
 
 <br />
 
-<div><button type="button" class="btn btn-primary" onclick="fuckingTelegram()">Send Message to Telegram</button></div>
-<div><button type="button" class="btn btn-primary" onclick="testAjaxStuff()">Reply Message to Telegram</button></div>
+<div><button type="button" class="btn btn-primary" onclick="SendTelegramMessage()">Send Message to Telegram</button></div>
+<div><button type="button" class="btn btn-primary" onclick="testAjaxStuff()">Test Ajax Stuff</button></div>
 
 <br />
 <br />
@@ -81,7 +86,7 @@
 
 <div class="row">
     <div class="col-lg-12">
-        <label class="editable" contenteditable="true">Additional Text Here</label>
+        <label class="editable" id="additionalText" contenteditable="true">Additional Text Here</label>
     </div>
 </div>
 

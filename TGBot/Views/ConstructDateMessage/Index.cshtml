@@ -1,0 +1,31 @@
+﻿
+
+<div class="row">
+    <input id="urlToGetMessages" hidden value="@Url.Action("GetList", "ConstructDateMessage")" />
+    <div class="col-lg-3">
+        <label class="label" style="font-weight:bold">From</label>
+        <input class="form-control" id="fromDate" onchange="getMessages()" type="date" />
+    </div>
+
+    <div class="col-lg-3">
+        <label class="label" style="font-weight:bold">To</label>
+        <input class="form-control" id="toDate" onchange="getMessages()" type="date" />
+    </div>
+
+</div>
+
+<div id="messageConstructionDiv" class="row">
+    
+</div>
+
+<br />
+<br />
+<br />
+
+<div id="trades">
+    
+</div>
+
+
+
+<script src="~/js/ConstructMessageOnDate.js"></script>

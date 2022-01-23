@@ -15,14 +15,14 @@ namespace TGBot.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        
 
         
         private ComplexEntity Database;
 
-        public HomeController(ILogger<HomeController> logger, ComplexEntity Database)
+        public HomeController(ComplexEntity Database)
         {
-            _logger = logger;
+            
             this.Database = Database;
         }
 
@@ -37,6 +37,22 @@ namespace TGBot.Controllers
             if(passData.tID == null)
             {
                 passData.tID = 0;
+            }
+            
+            
+            //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  THIS NEEDS TO CHANGE FOR GOLD AND US30
+            if(passData.tTradeType == 1)
+            {
+                passData.tTPPips =(int) Math.Round(((decimal)(passData.tTp - passData.tCurrentPrice) * 10000));
+                passData.tSlPips =(int) Math.Round(((decimal)(passData.tCurrentPrice - passData.tSL) * 10000));
+                passData.tRiskRewardRadio = passData.tTPPips / passData.tSlPips;
+            }
+            
+            if(passData.tTradeType == 2)
+            {
+                passData.tTPPips = (int)Math.Round(((decimal)(passData.tCurrentPrice - passData.tTp) * 10000));
+                passData.tSlPips = (int)Math.Round(((decimal)(passData.tSL - passData.tCurrentPrice) * 10000));
+                passData.tRiskRewardRadio = passData.tTPPips / passData.tSlPips;
             }
 
 

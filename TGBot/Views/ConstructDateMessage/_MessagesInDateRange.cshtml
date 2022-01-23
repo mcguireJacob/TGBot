@@ -1,0 +1,35 @@
+﻿@model List<TradeInfo_SearchByDate_Result>
+
+
+
+
+<div class="row">
+    <div class="col-lg-12">Win Ratio @Model.First().WinRatio%</div>
+</div>
+<br />
+@foreach (var Message in Model)
+{
+    <div class="closedTradeHolder">
+        <input class="tHitSl" hidden value="@Message.tHitSl" />
+        <input class="tHitTp" hidden value="@Message.tHitTp" />
+        <input class="tManuallyClosed" hidden value="@Message.tManuallyClosed" />
+        @if (Message.tManuallyClosed == true && Message.tManuallyClosedPips > 0)
+        {
+            <label>@Message.lTradePair @Message.tManuallyClosedPips pips ✅</label>
+        }
+        @if (Message.tManuallyClosed == true && Message.tManuallyClosedPips < 0)
+        {
+            <label>@Message.lTradePair @Message.tManuallyClosedPips pips ❌</label>
+        }
+
+        @if (Message.tHitSl == true)
+        {
+            <label>@Message.lTradePair @Message.tSlPips pips ❌</label>
+        }
+        @if (Message.tHitTp == true)
+        {
+            <label>@Message.lTradePair @Message.tTPPips pips ✅</label>
+        }
+
+    </div>
+} 
