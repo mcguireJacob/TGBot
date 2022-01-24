@@ -17,19 +17,20 @@
             <input type="hidden" id="ajacall" value="@Url.Action("getResults")" />
             <input hidden id="getPricey" value="@Url.Action("GetPriceOfSelected")" />
             <label>Trading Pair</label>
-            <select id="tradingPair" class="form-control"  style="display:none" onchange="callForPrice($(this))">
-                <option value="10">Please Select</option>
-                <option value="1">EurUsd</option>
-                <option value="2">AudJpy</option>
-            </select>
-            <select id="tradingPairLimit" class="form-control"  onchange="callForPrice($(this))">
-                <option value="10">Please Select</option>
+            <select id="tradingPair" class="form-control"   onchange="callForPrice()">
+                <option value="">Please Select</option>
                 <option value="1">EurUsd</option>
                 <option value="2">AudJpy</option>
             </select>
         </div>
+        <div class="col-lg-4" id="LimitDiv" style="display:none" >
+            <label>At</label>
+            <input class="form-control" type="number" id="LimitAt"  onkeyup="Limit()" placeholder="AT" />
+        </div>
         <input hidden id="currentPrice" name="tCurrentPrice" />
+        <input hidden id="limitOne"  />
     </div>
+
     <div class="row">
         <div class="col-lg-4">
             <label>Stop Loss</label>
@@ -66,6 +67,15 @@
         <label id="TextOfSelected" class="editable" contenteditable="true"></label>
     </div>
 </div>
+<br />
+
+
+<div class="row">
+    <div class="col-lg-12">
+        <label id="LimitAtMessage" class="editable" contenteditable="true"></label>
+    </div>
+</div>
+
 <br />
 
 

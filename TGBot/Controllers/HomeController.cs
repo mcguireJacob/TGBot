@@ -32,28 +32,42 @@ namespace TGBot.Controllers
             return View();
         }
        
-        public IActionResult SaveTheTrade(TradeInfo_Set_Result.Parameters passData)
+        public async Task<IActionResult> SaveTheTrade(TradeInfo_Set_Result.Parameters passData)
         {
             if(passData.tID == null)
             {
                 passData.tID = 0;
             }
-            
-            
+
+
             //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  THIS NEEDS TO CHANGE FOR GOLD AND US30
-            if(passData.tTradeType == 1)
+            switch (passData.tTradeType)
             {
-                passData.tTPPips =(int) Math.Round(((decimal)(passData.tTp - passData.tCurrentPrice) * 10000));
-                passData.tSlPips =(int) Math.Round(((decimal)(passData.tCurrentPrice - passData.tSL) * 10000));
-                passData.tRiskRewardRadio = passData.tTPPips / passData.tSlPips;
+                case 1:
+                    passData.tTPPips = (int)Math.Round(((decimal)(passData.tTp - passData.tCurrentPrice) * 10000));
+                    passData.tSlPips = (int)Math.Round(((decimal)(passData.tCurrentPrice - passData.tSL) * 10000));
+                    passData.tRiskRewardRadio = passData.tTPPips / passData.tSlPips;
+                    break;
+                case 2:
+                    passData.tTPPips = (int)Math.Round(((decimal)(passData.tCurrentPrice - passData.tTp) * 10000));
+                    passData.tSlPips = (int)Math.Round(((decimal)(passData.tSL - passData.tCurrentPrice) * 10000));
+                    passData.tRiskRewardRadio = passData.tTPPips / passData.tSlPips;
+                    break;
+                case 3:
+                    passData.tCurrentPrice = await GetPriceOfSelected((int)passData.tTradingPair);
+                    passData.tTPPips = (int)Math.Round(((decimal)(passData.tTp - passData.tLimitOne) * 10000));
+                    passData.tSlPips = (int)Math.Round(((decimal)(passData.tLimitOne - passData.tSL) * 10000));
+                    passData.tRiskRewardRadio = passData.tTPPips / passData.tSlPips;
+                    break;
+                case 4:
+                    passData.tCurrentPrice = await GetPriceOfSelected((int)passData.tTradingPair);
+                    passData.tTPPips = (int)Math.Round(((decimal)(passData.tLimitOne - passData.tTp) * 10000));
+                    passData.tSlPips = (int)Math.Round(((decimal)(passData.tSL - passData.tLimitOne) * 10000));
+                    passData.tRiskRewardRadio = passData.tTPPips / passData.tSlPips;
+                    break;
             }
+
             
-            if(passData.tTradeType == 2)
-            {
-                passData.tTPPips = (int)Math.Round(((decimal)(passData.tCurrentPrice - passData.tTp) * 10000));
-                passData.tSlPips = (int)Math.Round(((decimal)(passData.tSL - passData.tCurrentPrice) * 10000));
-                passData.tRiskRewardRadio = passData.tTPPips / passData.tSlPips;
-            }
 
 
 
@@ -95,10 +109,7 @@ namespace TGBot.Controllers
 
 
         
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+        
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

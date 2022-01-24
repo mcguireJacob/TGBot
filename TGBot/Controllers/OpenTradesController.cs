@@ -74,7 +74,7 @@ namespace TGBot.Controllers
         public async Task SendReplyToMessage(int id)
         {
             int api = _Database.TradeInfo_GetByID(id).FirstOrDefault().tTelegramMessageID;
-            string apiLink = "https://api.telegram.org/bot5074478768:AAGgm7gcHeySMXo13qhw3fwwYHxx1F7S6eg/sendMessage?chat_id=@ShitTradinBot&reply_to_message_id="+ api + "&text=Close Trade NOW";
+            string apiLink = "https://api.telegram.org/bot5074478768:AAGgm7gcHeySMXo13qhw3fwwYHxx1F7S6eg/sendMessage?chat_id=@ShitTradinBot&reply_to_message_id="+ api + "&text=Close Trade";
 
             HttpClient client = new HttpClient();
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, apiLink);

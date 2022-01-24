@@ -1,3 +1,9 @@
 ﻿.dets:nth-of-type(even) {
     background-color: lightgray;
+
+}
+
+
+.textCenter{
+    text-align:center
 }

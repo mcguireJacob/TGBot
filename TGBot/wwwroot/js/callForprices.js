@@ -1,29 +1,38 @@
 ﻿
 
-function callForPrice(elem) {
+function callForPrice() {
 
-    var selected = elem.val();
-    console.log(selected)
-    console.log(elem.attr('id'))
-    
-    if (elem.attr('id') == 'tradingPairLimit') {
-        $("#TextOfSelected").text("🔻" + $("#" + elem.attr('id') + " option:selected").text())
-    } else {
+    var tradeType = $("#TradeTypeSelect").val()
 
-
-        NK.Ajax.post($("#getPricey").val(),
-            { id: selected },
-            function (data) {
-                getThePrices(data)
-            },
-            function () {
-                console.log("DIDNT WORK")
-            }
-        )
+    console.log("hi")
+    switch (tradeType) {
+        case '1':
+        case '2':
+            getPriceFromAPI();
+            break;
+        case '3':
+        case '4':
+            $("#TextOfSelected").text("🔻" + $("#tradingPair option:selected").text())
+            break;
+        
     }
-
-
 }
+
+
+function getPriceFromAPI() {
+    var selected = $("#tradingPair").val()
+    NK.Ajax.post($("#getPricey").val(),
+        { id: selected },
+        function (data) {
+            getThePrices(data)
+        },
+        function () {
+            console.log("DIDNT WORK")
+        }
+    )
+}
+
+
 
 
 
@@ -42,11 +51,12 @@ function SendTelegramMessage() {
     var sl = $("#StopLoss").text()
     var tp = $("#TakeProfit").text()
     var additional = $("#additionalText").text()
+    var limitOne = $("#LimitAt").val()
     var message = ''
     if (additional != 'Additional Text Here') {
         message = tradeType + "%0D%0A" + pair + "%0D%0A %0D%0A" + sl + "%0D%0A" + tp + "%0D%0A %0D%0A" + additional;
     } else {
-        message = tradeType + "%0D%0A" + pair + "%0D%0A %0D%0A" + sl + "%0D%0A" + tp;
+        message = tradeType + "%0D%0A" + pair + "%0D%0A %0D%0A" + "At: " + limitOne +   "%0D%0A %0D%0A" + sl + "%0D%0A" + tp;
     }
 
     postAjax('https://api.telegram.org/bot5074478768:AAGgm7gcHeySMXo13qhw3fwwYHxx1F7S6eg/sendMessage?chat_id=@ShitTradinBot&text=' + message, {},
@@ -67,30 +77,44 @@ function testAjaxStuff() {
 
 }
 
+function clearInputsAndMessage() {
+    $("#TextOfSelected").text("")
+    $("#StopLoss").text("")
+    $("#TakeProfit").text("")
+    $("#tradingPair").val("")
+    $("#StopLossInput").val("")
+    $("#TakeProfitInput").val("")
+    $("#LimitAt").val("")
+    $("#LimitAtMessage").text("")
+
+}
+
 
 
 function tradeTypeChange() {
     var selected = $("#TradeTypeSelect").val();
+    var tradeType = $("#TradeType")
+    clearInputsAndMessage()
 
 
-
+    $("#LimitDiv").css("display", "none")
     switch (selected) {
         case "Please Select":
-            $("#TradeType").text("");
+            tradeType.text("");
             break;
         case '1':
-            $("#TradeType").text("📈Buy Now");
+            tradeType.text("📈Buy Now");
             break;
         case '2':
-            $("#TradeType").text("📉Sell Now");
+            tradeType.text("📉Sell Now");
             break;
         case '3':
-            
-            $("#TradeType").text("📈Buy Limit");
+            $("#LimitDiv").css("display", "")
+            tradeType.text("📈Buy Limit");
             break;
         case '4':
-            
-            $("#TradeType").text("📉Sell Limit");
+            $("#LimitDiv").css("display", "")
+            tradeType.text("📉Sell Limit");
             break;
     }
 
@@ -99,11 +123,14 @@ function tradeTypeChange() {
 
 
 
+function Limit() {
+    console.log("ok")
+    $("#LimitAtMessage").text("At: " + $("#LimitAt").val())
+    $("#limitOne").val($("#LimitAt").val())
+}
+
 function StopLoss() {
     var typedSL = $("#StopLossInput").val()
-
-
-
     if (typedSL != "") {
         $("#StopLoss").text("🔸Stop Loss: " + typedSL);
     }
@@ -112,13 +139,11 @@ function StopLoss() {
 
 function TakeProfit() {
     var typedTP = $("#TakeProfitInput").val()
-
-
-
     if (typedTP != "") {
         $("#TakeProfit").text("🔹Take Profit: " + typedTP);
     }
 }
+
 
 
 
@@ -137,6 +162,7 @@ function saveForm(messageID) {
     var tCurrentPrice = $("#currentPrice").val()
     var tSL = $("#StopLossInput").val()
     var tTp = $("#TakeProfitInput").val()
+    var tLimitOne = $("#limitOne").val()
 
 
 
@@ -147,7 +173,8 @@ function saveForm(messageID) {
         tCurrentPrice: tCurrentPrice,
         tSL: tSL,
         tTp: tTp,
-        tTelegramMessageID: messageID
+        tTelegramMessageID: messageID,
+        tLimitOne: tLimitOne
     }
     NK.Ajax.post($("#TradingForm").attr("action"),
         payload,
