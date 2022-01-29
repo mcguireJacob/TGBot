@@ -27,7 +27,7 @@ namespace TGBot.Controllers
             var fromDate = DateTime.Parse(from);
             var toDate = DateTime.Parse(to);
 
-            var list = _Database.TradeInfo_SearchByDate(fromDate, toDate);
+            var list = _Database.TradeInfo_SearchByDate(fromDate, toDate) ?? new List<TradeInfo_SearchByDate_Result>();
 
             return PartialView("_MessagesInDateRange", list);
         }
