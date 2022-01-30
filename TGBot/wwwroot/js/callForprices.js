@@ -1,4 +1,14 @@
-﻿
+﻿$(function () {
+    disableAll()
+});
+
+function disableAll() {
+    $("#tradingPair").attr('disabled', true)
+    $("#StopLossInput").attr('disabled', true)
+    $("#TakeProfitInput").attr('disabled', true)
+    $("#LimitAt").attr('disabled', true)
+}
+
 
 function callForPrice() {
 
@@ -6,13 +16,33 @@ function callForPrice() {
 
     console.log("hi")
     switch (tradeType) {
+        
         case '1':
         case '2':
-            getPriceFromAPI();
+            if ($("#tradingPair").val() != '') {
+                $("#StopLossInput").attr('disabled', false)
+                $("#TakeProfitInput").attr('disabled', false)
+                getPriceFromAPI();
+            } else {
+                $("#StopLossInput").attr('disabled', true)
+                $("#TakeProfitInput").attr('disabled', true)
+            }
             break;
         case '3':
         case '4':
-            $("#TextOfSelected").text("🔻" + $("#tradingPair option:selected").text())
+            if ($("#tradingPair").val() != '') {
+                $("#TextOfSelected").text("🔻" + $("#tradingPair option:selected").text())
+            }
+            
+            if ($("#tradingPair").val() != '' && $("#LimitAt").val() != '') {
+                
+                $("#StopLossInput").attr('disabled', false)
+                $("#TakeProfitInput").attr('disabled', false)
+            } else {
+                $("#StopLossInput").attr('disabled', true)
+                $("#TakeProfitInput").attr('disabled', true)
+            }
+            
             break;
         
     }
@@ -56,8 +86,11 @@ function SendTelegramMessage() {
     if (additional != 'Additional Text Here') {
         message = tradeType + "%0D%0A" + pair + "%0D%0A %0D%0A" + sl + "%0D%0A" + tp + "%0D%0A %0D%0A" + additional;
     } else {
-        message = tradeType + "%0D%0A" + pair + "%0D%0A %0D%0A" + "At: " + limitOne +   "%0D%0A %0D%0A" + sl + "%0D%0A" + tp;
+        message = tradeType + "%0D%0A" + pair + "%0D%0A %0D%0A" + sl + "%0D%0A" + tp + "%0D%0A %0D%0A";
     }
+
+
+    /*message = tradeType + "%0D%0A" + pair + "%0D%0A %0D%0A" + "At: " + limitOne + "%0D%0A %0D%0A" + sl + "%0D%0A" + tp;*/
 
     postAjax('https://api.telegram.org/bot5074478768:AAGgm7gcHeySMXo13qhw3fwwYHxx1F7S6eg/sendMessage?chat_id=@ShitTradinBot&text=' + message, {},
         function (data) {
@@ -95,7 +128,7 @@ function tradeTypeChange() {
     var selected = $("#TradeTypeSelect").val();
     var tradeType = $("#TradeType")
     clearInputsAndMessage()
-
+    disableAll()
 
     $("#LimitDiv").css("display", "none")
     switch (selected) {
@@ -104,17 +137,23 @@ function tradeTypeChange() {
             break;
         case '1':
             tradeType.text("📈Buy Now");
+            $("#tradingPair").attr('disabled', false)
             break;
         case '2':
             tradeType.text("📉Sell Now");
+            $("#tradingPair").attr('disabled', false)
             break;
         case '3':
             $("#LimitDiv").css("display", "")
             tradeType.text("📈Buy Limit");
+            $("#tradingPair").attr('disabled', false)
+            $("#LimitAt").attr('disabled', false)
             break;
         case '4':
             $("#LimitDiv").css("display", "")
             tradeType.text("📉Sell Limit");
+            $("#tradingPair").attr('disabled', false)
+            $("#LimitAt").attr('disabled', false)
             break;
     }
 
@@ -124,9 +163,17 @@ function tradeTypeChange() {
 
 
 function Limit() {
-    console.log("ok")
+    
     $("#LimitAtMessage").text("At: " + $("#LimitAt").val())
     $("#limitOne").val($("#LimitAt").val())
+
+    if ($("#tradingPair").val() != '' && $("#LimitAt").val() != '') {
+        $("#StopLossInput").attr('disabled', false)
+        $("#TakeProfitInput").attr('disabled', false)
+    } else {
+        $("#StopLossInput").attr('disabled', true)
+        $("#TakeProfitInput").attr('disabled', true)
+    }
 }
 
 function StopLoss() {
