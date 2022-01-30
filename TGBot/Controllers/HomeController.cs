@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ using JSON = Newtonsoft.Json.JsonConvert;
 
 namespace TGBot.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         
