@@ -1,7 +1,7 @@
 ﻿@model List<TradeInfo_SearchByDate_Result>
 
 @{
-    decimal totalPips = 0;
+    int totalPips = 0;
  }
 
 
@@ -44,5 +44,5 @@
 </div>
     }
     <br />
-    <label>Total Pips: @totalPips</label>
+    <label id="totalPips">Total Pips: @totalPips</label>
 }

@@ -4,7 +4,7 @@ using System.Data.SqlClient;
 using JSON = Newtonsoft.Json.JsonConvert;
 using TGBot.Helper;
 
-//AUTO-GENERATED 1/22/2022 at 5:27 PM
+//AUTO-GENERATED 1/30/2022 at 3:06 PM
 //DO NOT ALTER THIS FILE
 //EXTEND THE CLASS IN A NEW PARTIAL CLASS INSTEAD
 namespace TGBot
@@ -15,8 +15,8 @@ namespace TGBot
 	public partial class TradeInfo_SearchByDate_Result
 	{
 		public string lTradePair { get; set; }
-		public decimal? tSlPips { get; set; }
-		public decimal? tTPPips { get; set; }
+		public int? tSlPips { get; set; }
+		public int? tTPPips { get; set; }
 		public bool tHitSl { get; set; }
 		public bool tHitTp { get; set; }
 		public bool tManuallyClosed { get; set; }
