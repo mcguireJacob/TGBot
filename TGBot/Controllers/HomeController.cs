@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -74,15 +76,28 @@ namespace TGBot.Controllers
 
 
                 
-                Database.TradeInfo_Set(passData);
+            var setData =  Database.TradeInfo_Set(passData);
+            var configuration = GetConfiguration();
+            var filename = configuration.GetSection("dirPath").Value;
 
+            Process buyNow = Process.Start(new ProcessStartInfo()
+            {
+                FileName = Path.Combine(filename, "AutoTPSL.exe"),
+                Arguments = setData.FirstOrDefault().tID.ToString(),
+                CreateNoWindow = false
+            });
+            buyNow.WaitForExit();
 
             return Json(true);
             
         }
 
 
-        
+        public IConfigurationRoot GetConfiguration()
+        {
+            var build = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+            return build.Build();
+        }
 
 
         public async Task<decimal> GetPriceOfSelected(int id)
