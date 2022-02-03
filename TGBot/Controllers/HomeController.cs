@@ -82,12 +82,12 @@ namespace TGBot.Controllers
 
             Process buyNow = Process.Start(new ProcessStartInfo()
             {
+                
                 FileName = Path.Combine(filename, "AutoTPSL.exe"),
                 Arguments = setData.FirstOrDefault().tID.ToString(),
                 CreateNoWindow = false
             });
-            buyNow.WaitForExit();
-
+            
             return Json(true);
             
         }
