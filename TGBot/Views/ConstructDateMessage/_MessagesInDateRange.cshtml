@@ -31,8 +31,8 @@
 
     @if (Message.tHitSl == true)
     {
-        <label class="tradeWinLoss">@Message.lTradePair @Message.tSlPips pips ❌</label>
-        totalPips += Message.tSlPips.Value;
+        <label class="tradeWinLoss">@Message.lTradePair @(Message.tSlPips * -1) pips ❌</label>
+        totalPips -= Message.tSlPips.Value;
     }
     @if (Message.tHitTp == true)
     {

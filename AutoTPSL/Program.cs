@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Dynamic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -14,14 +16,17 @@ namespace AutoTPSL
     {
         static void Main(string[] args)
         {
+
+
+            
+
             var tID = "";
             if( args.Length != 0 )
             {
                  tID = args[0];
             }
 
-
-            tID = "30";
+            
 
 
 
@@ -59,6 +64,7 @@ namespace AutoTPSL
                 parameters.Clear();
                 Console.WriteLine("Current price: " + currentPrice);
                 Console.WriteLine("Price Of Asseet : " + priceOfAssetCurrently);
+                
 
                 parameters.Add(new SqlParameter("tID", tID));
                 priceOfAssetCurrently = hitTheDB<TradeInfo_GetByID_Result>("TradeInfo_GetByID", parameters).FirstOrDefault().tLimitTwo;
@@ -70,61 +76,153 @@ namespace AutoTPSL
                 switch (data.tTradeType)
                 {
                     case 1:
-                        if(priceOfAssetCurrently > data.tTp)
+                        if(priceOfAssetCurrently >= data.tTp)
                         {
-                            parameters.Add(new SqlParameter("tID", tID));
-                            var sauce = hitTheDB<TID>("TradeHitTP", parameters);
-                            await SendReplyToMessage(tID, 1);
-                            Console.WriteLine("Sauce");
-                            
+                            TPSL(tID, 1);
                         }
-                        if(priceOfAssetCurrently < data.tSL)
+                        if(priceOfAssetCurrently <= data.tSL)
                         {
-                            parameters.Add(new SqlParameter("tID", tID));
-                            var sauce = hitTheDB<TID>("TradeHitSL", parameters);
-                            await SendReplyToMessage(tID, 2);
-                            Console.WriteLine("SL");
-                            
+
+                            TPSL(tID, 2);
                         }
                         break;
                     case 2:
-                        if (priceOfAssetCurrently < data.tTp)
+                        if (priceOfAssetCurrently <= data.tTp)
                         {
-                            parameters.Add(new SqlParameter("tID", tID));
-                            var sauce = hitTheDB<TID>("TradeHitTP", parameters);
-                            Console.WriteLine("Sauce");
-                            
+                            TPSL(tID, 1);
+
                         }
-                        if (priceOfAssetCurrently > data.tSL)
+                        if (priceOfAssetCurrently <= data.tSL)
                         {
-                            parameters.Add(new SqlParameter("tID", tID));
-                            var sauce = hitTheDB<TID>("TradeHitSL", parameters);
-                            Console.WriteLine("SL");
-                            
+                            TPSL(tID, 2);
+
                         }
                         break;
                     case 3:
+                        if(priceOfAssetCurrently <= data.tLimitOne && data.tLimitOrderHit == null)
+                        {
+                            TPSL(tID, 3);
+                        }
+                        if (priceOfAssetCurrently >= data.tTp && data.tLimitOrderHit != null)
+                        {
+                            TPSL(tID, 1);
+                        }
+                        if (priceOfAssetCurrently <= data.tSL && data.tLimitOrderHit != null)
+                        {
+                            TPSL(tID, 2);
+                        }
+
                         break;
                     case 4:
+
+                        if (priceOfAssetCurrently >= data.tLimitOne && data.tLimitOrderHit == null)
+                        {
+                            TPSL(tID, 4);
+                        }
+                        if (priceOfAssetCurrently <= data.tTp && data.tLimitOrderHit != null)
+                        {
+                            TPSL(tID, 1);
+                        }
+                        if (priceOfAssetCurrently >= data.tSL && data.tLimitOrderHit != null)
+                        {
+                            TPSL(tID, 2);
+                        }
                         break;
                 }
 
             }
         }
 
+        public static void TPSL(string tID, int winLoss)
+        {
+            //Local Testing
+            //var hardcodedPathToConsoleAPP = "C:\\Users\\Jacob\\Documents\\repo\\TGBotConsole\\AutoTPSL.exe";
+            
+            
+            //Deployment
+            var hardcodedPathToConsoleAPP = "C:\\inetpub\\wwwroot\\TGBotConsole\\AutoTPSL.exe";
+            
 
-        public static async Task SendReplyToMessage(string id, int TPSL)
+
+            Console.WriteLine(winLoss);
+
+            List<SqlParameter> parameters = new List<SqlParameter>();
+            switch (winLoss)
+            {
+                case 1:
+                    parameters.Add(new SqlParameter("tID", tID));
+                    hitTheDB<TID>("TradeHitTP", parameters);
+                    SendReplyToMessage(tID, winLoss).Wait();
+                    Environment.Exit(0);
+                    break;
+                case 2:
+                    parameters.Add(new SqlParameter("tID", tID));
+                    hitTheDB<TID>("TradeHitSL", parameters);
+                    SendReplyToMessage(tID, winLoss).Wait();
+                    Environment.Exit(0);
+                    break;
+                case 3:
+                    parameters.Add(new SqlParameter("tID", tID));
+                    hitTheDB<TID>("TradeHitLimit", parameters);
+                    SendReplyToMessage(tID, winLoss).Wait();
+                    Process buyNow = Process.Start(new ProcessStartInfo()
+                    {
+
+                        FileName = Path.Combine(hardcodedPathToConsoleAPP),
+                        Arguments = tID,
+
+                    });
+                    parameters.Clear();
+                    parameters.Add(new SqlParameter("pTradeID", tID));
+                    parameters.Add(new SqlParameter("pProcessID", buyNow.Id));
+                    hitTheDB<SetProcessID_Result>("SetProcessID", parameters);
+                    Environment.Exit(0);
+                    break;
+                case 4:
+                    parameters.Add(new SqlParameter("tID", tID));
+                    hitTheDB<TID>("TradeHitLimit", parameters);
+                    SendReplyToMessage(tID, winLoss).Wait();
+                    Process SellNow = Process.Start(new ProcessStartInfo()
+                    {
+
+                        FileName = Path.Combine(hardcodedPathToConsoleAPP),
+                        Arguments = tID,
+
+                    });
+                    parameters.Clear();
+                    parameters.Add(new SqlParameter("pTradeID", tID));
+                    parameters.Add(new SqlParameter("pProcessID", SellNow.Id));
+                    hitTheDB<SetProcessID_Result>("SetProcessID", parameters);
+                    Environment.Exit(0);
+                    break;
+            }
+        }
+
+
+        public static async Task<bool> SendReplyToMessage(string id, int TPSL)
         {
             var messageTPSL = "";
             //1 for TP 2 for SL
-            if(TPSL == 1)
+            switch (TPSL)
             {
-                messageTPSL = "TP HIT";
+                case 1:
+                    messageTPSL = "TP HIT";
+                    break;
+                case 2:
+                    messageTPSL = "SL HIT";
+                    break;
+                case 3:
+                case 4:
+                    messageTPSL = "Limit Order Filled";
+                    break;
             }
-            else
-            {
-                messageTPSL = "SL HIT";
-            }
+                
+                
+            
+            
+            
+                
+            
 
             List<SqlParameter> parameters = new List<SqlParameter>();
             parameters.Add(new SqlParameter("tID", id));
@@ -136,11 +234,13 @@ namespace AutoTPSL
             request.Headers.Clear();
 
             
-            await client.SendAsync(request);
-            
-           
+            var ok = await client.SendAsync(request);
+
             
 
+
+
+            return true;
 
            
 
@@ -169,7 +269,8 @@ namespace AutoTPSL
             {
 
 
-                SqlConnection.ConnectionString = "Server=localhost\\SQLEXPRESS;Initial Catalog=Trades;Trusted_Connection=True;";
+                SqlConnection.ConnectionString = "Server=TGBOT\\SQLEXPRESS;Initial Catalog=Trades;User Id=sa;Password=sa";
+                //SqlConnection.ConnectionString = "Server=localhost\\SQLEXPRESS;Initial Catalog=Trades;Trusted_Connection=True;";
 
 
 
@@ -285,5 +386,15 @@ namespace AutoTPSL
         public int tTelegramMessageID { get; set; }
         public decimal? tRiskRewardRadio { get; set; }
         public int? tManuallyClosedPips { get; set; }
+        public bool? tLimitOrderHit { get; set; }
+    }
+
+
+
+    public partial class SetProcessID_Result
+    {
+        public int? pTradeID { get; set; }
+        public int? pProcessID { get; set; }
+
     }
 }

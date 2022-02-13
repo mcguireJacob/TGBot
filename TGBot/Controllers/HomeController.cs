@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -19,14 +20,14 @@ namespace TGBot.Controllers
     [Authorize]
     public class HomeController : Controller
     {
-        
 
-        
+
+        private readonly IWebHostEnvironment webHostEnvironment;
         private ComplexEntity Database;
 
-        public HomeController(ComplexEntity Database)
+        public HomeController(ComplexEntity Database, IWebHostEnvironment webHostEnvironment)
         {
-            
+            this.webHostEnvironment = webHostEnvironment;
             this.Database = Database;
         }
 
@@ -71,6 +72,7 @@ namespace TGBot.Controllers
                     break;
             }
 
+
             
 
 
@@ -79,16 +81,16 @@ namespace TGBot.Controllers
             var setData =  Database.TradeInfo_Set(passData);
             var configuration = GetConfiguration();
             var filename = configuration.GetSection("dirPath").Value;
-
+            
             Process buyNow = Process.Start(new ProcessStartInfo()
             {
                 
                 FileName = Path.Combine(filename, "AutoTPSL.exe"),
                 Arguments = setData.FirstOrDefault().tID.ToString(),
-                CreateNoWindow = false
+                
             });
-            
-            return Json(true);
+            var path = Path.GetFullPath("TGBotConsole");
+            return Json(path);
             
         }
 

@@ -1,4 +1,6 @@
-﻿$(function () {
+﻿const { log } = require("node:console");
+
+$(function () {
     disableAll()
 });
 
@@ -225,8 +227,9 @@ function saveForm(messageID) {
     }
     NK.Ajax.post($("#TradingForm").attr("action"),
         payload,
-        function () {
+        function (path) {
             console.log("it worked")
+            console.log(path)
         },
         function () {
             console.log("DIDNT WORK")
