@@ -81,14 +81,23 @@ namespace TGBot.Controllers
             var setData =  Database.TradeInfo_Set(passData);
             var configuration = GetConfiguration();
             var filename = configuration.GetSection("dirPath").Value;
-            
+
             Process buyNow = Process.Start(new ProcessStartInfo()
             {
-                
+
                 FileName = Path.Combine(filename, "AutoTPSL.exe"),
                 Arguments = setData.FirstOrDefault().tID.ToString(),
-                
+
             });
+
+
+
+
+
+
+
+
+
             var path = Path.GetFullPath("TGBotConsole");
             return Json(path);
             

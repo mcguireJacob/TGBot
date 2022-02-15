@@ -26,11 +26,15 @@ namespace AutoTPSL
                  tID = args[0];
             }
 
-            
+            //tID = "50";
 
 
 
-            
+
+
+
+
+
             CheckIfHitTakeProfitOrStopLoss(tID);
 
 
@@ -40,7 +44,7 @@ namespace AutoTPSL
 
 
 
-        public async static void CheckIfHitTakeProfitOrStopLoss(string tID)
+        public static void CheckIfHitTakeProfitOrStopLoss(string tID)
         {
 
             List<SqlParameter> parameters = new List<SqlParameter>();
@@ -49,11 +53,18 @@ namespace AutoTPSL
             var data = hitTheDB<TradeInfo_GetByID_Result>("TradeInfo_GetByID", parameters).FirstOrDefault();
             parameters.Clear();
 
-            var currentPrice = data.tCurrentPrice;
+            
+
+            parameters.Add(new SqlParameter("lTradePairLookupID", data.tTradingPair));
+            var PairType = hitTheDB<TradingPair>("lTradePairLookup_GetPairByID", parameters).FirstOrDefault().lTradePair;
+            UpdateCurrentPrice(PairType, tID);
+            parameters.Clear();
 
 
             var priceOfAssetCurrently = data.tLimitTwo;
 
+
+          
             
 
 
@@ -62,9 +73,11 @@ namespace AutoTPSL
                 parameters.Add(new SqlParameter("tID", tID));
                 data = hitTheDB<TradeInfo_GetByID_Result>("TradeInfo_GetByID", parameters).FirstOrDefault();
                 parameters.Clear();
-                Console.WriteLine("Current price: " + currentPrice);
-                Console.WriteLine("Price Of Asseet : " + priceOfAssetCurrently);
                 
+                Console.WriteLine("Price Of Asseet : " + priceOfAssetCurrently);
+
+                
+
 
                 parameters.Add(new SqlParameter("tID", tID));
                 priceOfAssetCurrently = hitTheDB<TradeInfo_GetByID_Result>("TradeInfo_GetByID", parameters).FirstOrDefault().tLimitTwo;
@@ -131,17 +144,18 @@ namespace AutoTPSL
                 }
 
             }
+            
         }
 
         public static void TPSL(string tID, int winLoss)
         {
             //Local Testing
-            //var hardcodedPathToConsoleAPP = "C:\\Users\\Jacob\\Documents\\repo\\TGBotConsole\\AutoTPSL.exe";
-            
-            
+            var hardcodedPathToConsoleAPP = "C:\\Users\\Jacob\\Documents\\repo\\TGBotConsole\\AutoTPSL.exe";
+
+
             //Deployment
-            var hardcodedPathToConsoleAPP = "C:\\inetpub\\wwwroot\\TGBotConsole\\AutoTPSL.exe";
-            
+            //var hardcodedPathToConsoleAPP = "C:\\inetpub\\wwwroot\\TGBotConsole\\AutoTPSL.exe";
+
 
 
             Console.WriteLine(winLoss);
@@ -153,18 +167,21 @@ namespace AutoTPSL
                     parameters.Add(new SqlParameter("tID", tID));
                     hitTheDB<TID>("TradeHitTP", parameters);
                     SendReplyToMessage(tID, winLoss).Wait();
-                    Environment.Exit(0);
+                    killPythonScript(tID);
+                    
                     break;
                 case 2:
                     parameters.Add(new SqlParameter("tID", tID));
                     hitTheDB<TID>("TradeHitSL", parameters);
                     SendReplyToMessage(tID, winLoss).Wait();
-                    Environment.Exit(0);
+                    killPythonScript(tID);
+                    
                     break;
                 case 3:
                     parameters.Add(new SqlParameter("tID", tID));
                     hitTheDB<TID>("TradeHitLimit", parameters);
                     SendReplyToMessage(tID, winLoss).Wait();
+                    
                     Process buyNow = Process.Start(new ProcessStartInfo()
                     {
 
@@ -176,12 +193,13 @@ namespace AutoTPSL
                     parameters.Add(new SqlParameter("pTradeID", tID));
                     parameters.Add(new SqlParameter("pProcessID", buyNow.Id));
                     hitTheDB<SetProcessID_Result>("SetProcessID", parameters);
-                    Environment.Exit(0);
+                    killPythonScript(tID, buyNow.Id);
                     break;
                 case 4:
                     parameters.Add(new SqlParameter("tID", tID));
                     hitTheDB<TID>("TradeHitLimit", parameters);
                     SendReplyToMessage(tID, winLoss).Wait();
+                    
                     Process SellNow = Process.Start(new ProcessStartInfo()
                     {
 
@@ -193,7 +211,7 @@ namespace AutoTPSL
                     parameters.Add(new SqlParameter("pTradeID", tID));
                     parameters.Add(new SqlParameter("pProcessID", SellNow.Id));
                     hitTheDB<SetProcessID_Result>("SetProcessID", parameters);
-                    Environment.Exit(0);
+                    killPythonScript(tID, SellNow.Id);
                     break;
             }
         }
@@ -249,6 +267,62 @@ namespace AutoTPSL
 
 
 
+        public static void UpdateCurrentPrice(string pair, string tID )
+        {
+            pair = pair.Insert(3, "/");
+
+
+            ProcessStartInfo pyArgs = new ProcessStartInfo();
+            pyArgs.FileName = "C:\\Users\\Jacob\\AppData\\Local\\Programs\\Python\\Python310\\python.exe";
+            pyArgs.Arguments = string.Format("{0} {1} {2}", "C:\\Users\\Jacob\\Documents\\repo\\TGBot\\GetPrices.py", pair, tID);
+            pyArgs.UseShellExecute = false;
+            pyArgs.RedirectStandardOutput = true;
+            
+            Process p = Process.Start(pyArgs);
+
+            List<SqlParameter> parameters = new List<SqlParameter>();
+            parameters.Add(new SqlParameter("pTradeID", tID));
+            parameters.Add(new SqlParameter("pProcessID", p.Id));
+            hitTheDB<SetProcessID_Result>("SetProcessID", parameters);
+
+        }
+
+        public static void killPythonScript(string tID, int limitProcessID = -1)
+        {
+            List<SqlParameter> parameters = new List<SqlParameter>();
+            parameters.Add(new SqlParameter("pTradeID", tID));
+            
+            var processToClose = hitTheDB<SetProcessID_Result>("GetProcessID_ByTicketID", parameters);
+            List<Process> listOfProcessIDs = new List<Process>();
+            if (processToClose.Count > 0)
+            {
+                Process[] p = Process.GetProcesses();
+                foreach (var proc in processToClose)
+                {
+                    foreach(var process in p)
+                    {
+                        if (process.Id == proc.pProcessID)
+                        {
+                            listOfProcessIDs.Add(process);
+                        }
+                    }
+                    
+                }
+
+                foreach(var procc in listOfProcessIDs)
+                {
+                    if(procc.Id != limitProcessID)
+                    {
+                        procc.Kill();
+                    }
+                    
+                }
+                Environment.Exit(0);
+            }
+        }
+
+
+
 
 
 
@@ -269,8 +343,8 @@ namespace AutoTPSL
             {
 
 
-                SqlConnection.ConnectionString = "Server=TGBOT\\SQLEXPRESS;Initial Catalog=Trades;User Id=sa;Password=sa";
-                //SqlConnection.ConnectionString = "Server=localhost\\SQLEXPRESS;Initial Catalog=Trades;Trusted_Connection=True;";
+                //SqlConnection.ConnectionString = "Server=TGBOT\\SQLEXPRESS;Initial Catalog=Trades;User Id=sa;Password=sa";
+                SqlConnection.ConnectionString = "Server=localhost\\SQLEXPRESS;Initial Catalog=Trades;Trusted_Connection=True;";
 
 
 
@@ -390,6 +464,11 @@ namespace AutoTPSL
     }
 
 
+    public partial class TradingPair
+    {
+        public string lTradePair { get; set; }
+    }
+
 
     public partial class SetProcessID_Result
     {
@@ -397,4 +476,6 @@ namespace AutoTPSL
         public int? pProcessID { get; set; }
 
     }
+
+    
 }
