@@ -29,48 +29,49 @@
 
 @foreach (var trade in Model.OpenTradeList)
 {
-    <div class="row dets">
-        <div class="col-md-2 textCenter">
-            @foreach (var tradeLookup in Model.TradeTypeLookupList)
+<div class="row dets">
+    <div class="col-md-2 textCenter">
+        @foreach (var tradeLookup in Model.TradeTypeLookupList)
             {
                 if (trade.tTradeType == tradeLookup.lTradeTypeID)
                 {
-                    <label>@tradeLookup.lTrade</label>
+        <label>@tradeLookup.lTrade</label>
                 }
 
 
             }
-        </div>
+    </div>
 
-        <div class="col-md-1 textCenter">
-            @foreach (var tradePairLookup in Model.TradePairLookupList)
+    <div class="col-md-1 textCenter">
+        @foreach (var tradePairLookup in Model.TradePairLookupList)
             {
                 if (trade.tTradingPair == tradePairLookup.lTradePairLookupID)
                 {
-                    <label>@tradePairLookup.lTradePair</label>
+        <label>@tradePairLookup.lTradePair</label>
                 }
             }
-        </div>
-
-        <div class="col-md-2 textCenter">
-            @trade.tCurrentPrice
-        </div>
-        <div class="col-md-1 textCenter">
-            @trade.tSL
-        </div>
-        <div class="col-md-1 textCenter">
-            @trade.tTp
-        </div>
-        <div class="col-md-3 textCenter">
-            @trade.tTimePlaced
-        </div>
-        <div>
-            <input class="tID" hidden value="@trade.tID" />
-            <a href="#" class="closeTrade"  onclick="CloseTradeManually($(this))">Close Manually</a>
-        </div>
-
-
     </div>
+
+    <div class="col-md-2 textCenter">
+        @trade.tCurrentPrice
+    </div>
+    <div class="col-md-1 textCenter">
+        @trade.tSL
+    </div>
+    <div class="col-md-1 textCenter">
+        @trade.tTp
+    </div>
+    <div class="col-md-3 textCenter">
+        @trade.tTimePlaced
+    </div>
+    <div class="col-md-2 textCenter " >
+        <input class="tID" hidden value="@trade.tID" />
+        <a href="#" class="closeTrade" onclick="CloseTradeManually($(this))">Close Manually</a>
+    </div>
+   
+
+
+</div>
 
 }
 
