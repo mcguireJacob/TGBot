@@ -37,7 +37,7 @@ namespace TGBot.Controllers
             var controller = new HomeController(_Database, webHostEnvironment);
 
             decimal priceNowDuringClose = await controller.GetPriceOfSelected((int)getInfoByID.tTradingPair);
-            priceNowDuringClose = 1.4m;
+            
 
             int closingPrice = 0;
 

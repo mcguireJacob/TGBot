@@ -26,16 +26,27 @@ namespace AutoTPSL
                  tID = args[0];
             }
 
-            //tID = "50";
+            
+            
 
-
-
-
-
-
-
-
-            CheckIfHitTakeProfitOrStopLoss(tID);
+            
+            try
+            {
+                CheckIfHitTakeProfitOrStopLoss(tID);
+            }
+            catch(Exception e)
+            {
+                if (File.Exists("LogFileForConsole.txt"))
+                {
+                    File.WriteAllText("LogFileForConsole.txt", e.Message);
+                }
+                else
+                {
+                    File.Create("FILEOfFIlining.txt");
+                }
+                
+            }
+            
 
 
 
@@ -57,7 +68,22 @@ namespace AutoTPSL
 
             parameters.Add(new SqlParameter("lTradePairLookupID", data.tTradingPair));
             var PairType = hitTheDB<TradingPair>("lTradePairLookup_GetPairByID", parameters).FirstOrDefault().lTradePair;
-            UpdateCurrentPrice(PairType, tID);
+
+            try
+            {
+                UpdateCurrentPrice(PairType, tID);
+            }
+            catch (Exception e)
+            {
+                if (File.Exists("LogFileForConsole.txt"))
+                {
+                    File.WriteAllText("LogFileForConsole.txt", e.Message);
+                }
+
+            }
+            
+
+
             parameters.Clear();
 
 
@@ -105,7 +131,7 @@ namespace AutoTPSL
                             TPSL(tID, 1);
 
                         }
-                        if (priceOfAssetCurrently <= data.tSL)
+                        if (priceOfAssetCurrently >= data.tSL)
                         {
                             TPSL(tID, 2);
 
@@ -144,17 +170,19 @@ namespace AutoTPSL
                 }
 
             }
-            
+            killPythonScript(tID);
+
+
         }
 
         public static void TPSL(string tID, int winLoss)
         {
             //Local Testing
-            var hardcodedPathToConsoleAPP = "C:\\Users\\Jacob\\Documents\\repo\\TGBotConsole\\AutoTPSL.exe";
+            //var hardcodedPathToConsoleAPP = "C:\\Users\\Jacob\\Documents\\repo\\TGBotConsole\\AutoTPSL.exe";
 
 
             //Deployment
-            //var hardcodedPathToConsoleAPP = "C:\\inetpub\\wwwroot\\TGBotConsole\\AutoTPSL.exe";
+            var hardcodedPathToConsoleAPP = "C:\\inetpub\\wwwroot\\TGBotConsole\\AutoTPSL.exe";
 
 
 
@@ -273,22 +301,52 @@ namespace AutoTPSL
 
 
             ProcessStartInfo pyArgs = new ProcessStartInfo();
-            pyArgs.FileName = "C:\\Users\\Jacob\\AppData\\Local\\Programs\\Python\\Python310\\python.exe";
-            pyArgs.Arguments = string.Format("{0} {1} {2}", "C:\\Users\\Jacob\\Documents\\repo\\TGBot\\GetPrices.py", pair, tID);
-            pyArgs.UseShellExecute = false;
-            pyArgs.RedirectStandardOutput = true;
-            
-            Process p = Process.Start(pyArgs);
 
-            List<SqlParameter> parameters = new List<SqlParameter>();
-            parameters.Add(new SqlParameter("pTradeID", tID));
-            parameters.Add(new SqlParameter("pProcessID", p.Id));
-            hitTheDB<SetProcessID_Result>("SetProcessID", parameters);
+            //DEV
+            //pyArgs.FileName = "C:\\Users\\Jacob\\AppData\\Local\\Programs\\Python\\Python310\\python.exe";
+            //pyArgs.Arguments = string.Format("{0} {1} {2}", "C:\\Users\\Jacob\\Documents\\repo\\TGBot\\GetPrices.py", pair, tID);
+
+            //PROD
+            //pyArgs.FileName = "C:\\Users\\Administrator\\AppData\\Local\\Programs\\Python\\Python310\\python.exe";
+            pyArgs.FileName = "C:\\Python\\python.exe";
+            pyArgs.Arguments = string.Format("{0} {1} {2}", "C:\\inetpub\\wwwroot\\GetPrices.py", pair, tID);
+
+
+
+
+            pyArgs.UseShellExecute = false;
+
+            try
+            {
+                Process p = Process.Start(pyArgs);
+                List<SqlParameter> parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter("pTradeID", tID));
+                parameters.Add(new SqlParameter("pProcessID", p.Id));
+                hitTheDB<SetProcessID_Result>("SetProcessID", parameters);
+            }
+            catch (Exception e)
+            {
+                if (File.Exists("LogFileForConsole.txt"))
+                {
+                    File.WriteAllText("LogFileForConsole.txt", e.Message);
+                }
+
+            }
+            
+
+            
 
         }
 
         public static void killPythonScript(string tID, int limitProcessID = -1)
         {
+
+            if (File.Exists("LogFileForConsole.txt"))
+            {
+                File.WriteAllText("LogFileForConsole.txt", "Killing All Proccesses TID : " + tID);
+            }
+
+
             List<SqlParameter> parameters = new List<SqlParameter>();
             parameters.Add(new SqlParameter("pTradeID", tID));
             
@@ -343,8 +401,8 @@ namespace AutoTPSL
             {
 
 
-                //SqlConnection.ConnectionString = "Server=TGBOT\\SQLEXPRESS;Initial Catalog=Trades;User Id=sa;Password=sa";
-                SqlConnection.ConnectionString = "Server=localhost\\SQLEXPRESS;Initial Catalog=Trades;Trusted_Connection=True;";
+                SqlConnection.ConnectionString = "Server=TGBOT\\SQLEXPRESS;Initial Catalog=Trades;User Id=sa;Password=sa";
+                //SqlConnection.ConnectionString = "Server=localhost\\SQLEXPRESS;Initial Catalog=Trades;Trusted_Connection=True;";
 
 
 

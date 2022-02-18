@@ -3,13 +3,13 @@
 
         <div class="col-lg-4">
             <label>Trade Type</label>
-            <select id="TradeTypeSelect" class="form-control"  onchange="tradeTypeChange()">
-                <option >Please Select</option>
+            <select id="TradeTypeSelect" class="form-control" onchange="tradeTypeChange()">
+                <option>Please Select</option>
                 <option value="1">Buy Now</option>
                 <option value="2">Sell Now</option>
                 <option value="3">Buy Limit</option>
                 <option value="4">Sell Limit</option>
-                
+
             </select>
         </div>
 
@@ -17,31 +17,35 @@
             <input type="hidden" id="ajacall" value="@Url.Action("getResults")" />
             <input hidden id="getPricey" value="@Url.Action("GetPriceOfSelected")" />
             <label>Trading Pair</label>
-            <select id="tradingPair" class="form-control"   onchange="callForPrice()">
+            <select id="tradingPair" class="form-control" onchange="callForPrice()">
                 <option value="">Please Select</option>
                 <option value="1">EurUsd</option>
                 <option value="2">AudJpy</option>
             </select>
         </div>
-        <div class="col-lg-4" id="LimitDiv" style="display:none" >
+        <div class="col-lg-4" id="LimitDiv" style="display:none">
             <label>At</label>
-            <input class="form-control" type="number" id="LimitAt"  onkeyup="Limit()" placeholder="AT" />
+            <input class="form-control" type="number" id="LimitAt" onkeyup="Limit()" placeholder="AT" />
         </div>
         <input hidden id="currentPrice" name="tCurrentPrice" />
-        <input hidden id="limitOne"  />
+        <input hidden id="limitOne" />
     </div>
 
     <div class="row">
         <div class="col-lg-4">
             <label>Stop Loss</label>
             <input class="form-control" type="number" id="StopLossInput" name="tSL" onkeyup="StopLoss()" placeholder="SL" />
+            <label style="color:orangered" id="SLError"></label>
         </div>
         <div class="col-lg-4">
             <label>Take Profit</label>
             <input class="form-control" type="number" id="TakeProfitInput" name="tTp" onkeyup="TakeProfit()" placeholder="TP" />
+            <label style="color:orangered" id="TPError"></label>
         </div>
     </div>
 </form>
+
+
 
 
 
@@ -114,6 +118,8 @@
     }
 </style>
 
-@section Scripts{ 
+@section Scripts{
     <script src="~/js/callForprices.js"></script>
+    <link href="~/css/toastr.css" rel="stylesheet" />
+    <script src="~/js/site/toastr.js"></script>
 }

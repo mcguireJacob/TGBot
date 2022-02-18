@@ -35,7 +35,7 @@ function callForPrice() {
             if ($("#tradingPair").val() != '') {
                 $("#TextOfSelected").text("🔻" + $("#tradingPair option:selected").text())
             }
-            
+            getPriceFromAPI()
             if ($("#tradingPair").val() != '' && $("#LimitAt").val() != '') {
                 
                 $("#StopLossInput").attr('disabled', false)
@@ -69,8 +69,11 @@ function getPriceFromAPI() {
 
 
 function getThePrices(param) {
-
-    $("#TextOfSelected").text("🔻" + $("#tradingPair option:selected").text() + " "  + param)
+    var tradeType = $("#TradeTypeSelect").val()
+    if (tradeType != 3 && tradeType != 4) {
+        $("#TextOfSelected").text("🔻" + $("#tradingPair option:selected").text() + " " + param)
+    }
+    
             
     $("#currentPrice").val(param)
 
@@ -78,28 +81,85 @@ function getThePrices(param) {
 
 
 function SendTelegramMessage() {
+
+    var tradeTypeValue = $("#TradeTypeSelect").val()
+
     var tradeType = $("#TradeType").text();
     var pair = $("#TextOfSelected").text()
     var sl = $("#StopLoss").text()
     var tp = $("#TakeProfit").text()
     var additional = $("#additionalText").text()
     var limitOne = $("#LimitAt").val()
-    var message = ''
-    if (additional != 'Additional Text Here') {
-        message = tradeType + "%0D%0A" + pair + "%0D%0A %0D%0A" + sl + "%0D%0A" + tp + "%0D%0A %0D%0A" + additional;
-    } else {
-        message = tradeType + "%0D%0A" + pair + "%0D%0A %0D%0A" + sl + "%0D%0A" + tp + "%0D%0A %0D%0A";
+    message = tradeType + "%0D%0A" + pair + "%0D%0A %0D%0A" + sl + "%0D%0A" + tp + "%0D%0A %0D%0A";
+    if (tradeTypeValue == 3 || tradeTypeValue == 4) {
+        message = tradeType + "%0D%0A" + pair + "%0D%0A %0D%0A" + "AT: " + limitOne + "%0D%0A %0D%0A"+ sl + "%0D%0A" + tp + "%0D%0A %0D%0A";
     }
+    if (additional != 'Additional Text Here') {
+        message += additional;
+    }
+
+
+    var slInput = $("#StopLossInput").val();
+    var tpInput = $("#TakeProfitInput").val();
+    
+    var currentPrice = $("#currentPrice").val();
+
+
+    
+
+    switch (tradeTypeValue) {
+        case '1':
+        case '3':
+            if (slInput > currentPrice) {
+                $("#SLError").text("SL IS BAD")
+                
+            } else {
+                $("#SLError").text("")
+            }
+            if (tpInput < currentPrice) {
+                $("#TPError").text("TP IS BAD")
+                
+            } else {
+                $("#TPError").text("")
+            }
+            break;
+        case '2':
+        case '4':
+            if (slInput < currentPrice) {
+                $("#SLError").text("SL IS BAD")
+                
+            } else {
+                $("#SLError").text("")
+            }
+            if (tpInput > currentPrice) {
+                $("#TPError").text("TP IS BAD")
+                
+            } else {
+                $("#TPError").text("")
+            }
+            break;
+    }
+   
+    
 
 
     /*message = tradeType + "%0D%0A" + pair + "%0D%0A %0D%0A" + "At: " + limitOne + "%0D%0A %0D%0A" + sl + "%0D%0A" + tp;*/
 
-    postAjax('https://api.telegram.org/bot5074478768:AAGgm7gcHeySMXo13qhw3fwwYHxx1F7S6eg/sendMessage?chat_id=@ShitTradinBot&text=' + message, {},
-        function (data) {
-            console.log(data.result.message_id);
-            saveForm(data.result.message_id)
-        }
-    );
+    if ($("#TPError").text() == "" && $("#SLError").text() == "") {
+        postAjax('https://api.telegram.org/bot5074478768:AAGgm7gcHeySMXo13qhw3fwwYHxx1F7S6eg/sendMessage?chat_id=@ShitTradinBot&text=' + message, {},
+            function (data) {
+                console.log(data.result.message_id);
+                saveForm(data.result.message_id)
+                toastr.success("Message Sent")
+            },
+            function () {
+                toastr.error("Message failed to send")
+            }
+        );
+        
+    }
+
+    
 
 
 
@@ -107,10 +167,6 @@ function SendTelegramMessage() {
 }
 
 
-function testAjaxStuff() {
-    postAjax('https://tradingview.com/api/authorize?login=user1&password=dfkjhoijogpoi')
-
-}
 
 function clearInputsAndMessage() {
     $("#TextOfSelected").text("")
@@ -179,10 +235,22 @@ function Limit() {
 }
 
 function StopLoss() {
+
+ 
     var typedSL = $("#StopLossInput").val()
+
+
+
     if (typedSL != "") {
         $("#StopLoss").text("🔸Stop Loss: " + typedSL);
     }
+
+
+
+    
+
+    
+    
 }
 
 
