@@ -33,8 +33,8 @@ namespace TGBot.Controllers
 
         public IActionResult Index()
         {
-            List<TradeInfo_List_Result> ok  = Database.TradeInfo_List();
-            return View();
+            List<lTradePairLookup_List_Result> TradePairsModel  = Database.lTradePairLookup_List();
+            return View(TradePairsModel);
         }
        
         public async Task<IActionResult> SaveTheTrade(TradeInfo_Set_Result.Parameters passData)
@@ -44,33 +44,41 @@ namespace TGBot.Controllers
                 passData.tID = 0;
             }
 
-
-            //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  THIS NEEDS TO CHANGE FOR GOLD AND US30
-            switch (passData.tTradeType)
+            var divideByNumber = 10000;
+            if (passData.tTradingPair == 13)
             {
-                case 1:
-                    passData.tTPPips = (int)Math.Round(((decimal)(passData.tTp - passData.tCurrentPrice) * 10000));
-                    passData.tSlPips = (int)Math.Round(((decimal)(passData.tCurrentPrice - passData.tSL) * 10000));
-                    passData.tRiskRewardRadio = passData.tTPPips / passData.tSlPips;
-                    break;
-                case 2:
-                    passData.tTPPips = (int)Math.Round(((decimal)(passData.tCurrentPrice - passData.tTp) * 10000));
-                    passData.tSlPips = (int)Math.Round(((decimal)(passData.tSL - passData.tCurrentPrice) * 10000));
-                    passData.tRiskRewardRadio = passData.tTPPips / passData.tSlPips;
-                    break;
-                case 3:
-                    passData.tCurrentPrice = await GetPriceOfSelected((int)passData.tTradingPair);
-                    passData.tTPPips = (int)Math.Round(((decimal)(passData.tTp - passData.tLimitOne) * 10000));
-                    passData.tSlPips = (int)Math.Round(((decimal)(passData.tLimitOne - passData.tSL) * 10000));
-                    passData.tRiskRewardRadio = passData.tTPPips / passData.tSlPips;
-                    break;
-                case 4:
-                    passData.tCurrentPrice = await GetPriceOfSelected((int)passData.tTradingPair);
-                    passData.tTPPips = (int)Math.Round(((decimal)(passData.tLimitOne - passData.tTp) * 10000));
-                    passData.tSlPips = (int)Math.Round(((decimal)(passData.tSL - passData.tLimitOne) * 10000));
-                    passData.tRiskRewardRadio = passData.tTPPips / passData.tSlPips;
-                    break;
+                divideByNumber = 10;
             }
+            //IF its not gold
+            
+                switch (passData.tTradeType)
+                {
+                    case 1:
+                        passData.tTPPips = (int)Math.Round(((decimal)(passData.tTp - passData.tCurrentPrice) * divideByNumber));
+                        passData.tSlPips = (int)Math.Round(((decimal)(passData.tCurrentPrice - passData.tSL) * divideByNumber));
+                        passData.tRiskRewardRadio = (decimal)passData.tTPPips / (decimal)passData.tSlPips;
+                        break;
+                    case 2:
+                        passData.tTPPips = (int)Math.Round(((decimal)(passData.tCurrentPrice - passData.tTp) * divideByNumber));
+                        passData.tSlPips = (int)Math.Round(((decimal)(passData.tSL - passData.tCurrentPrice) * divideByNumber));
+                        passData.tRiskRewardRadio = (decimal)passData.tTPPips / (decimal)passData.tSlPips;
+                        break;
+                    case 3:
+                        passData.tCurrentPrice = await GetPriceOfSelected((int)passData.tTradingPair);
+                        passData.tTPPips = (int)Math.Round(((decimal)(passData.tTp - passData.tLimitOne) * divideByNumber));
+                        passData.tSlPips = (int)Math.Round(((decimal)(passData.tLimitOne - passData.tSL) * divideByNumber));
+                        passData.tRiskRewardRadio = (decimal)passData.tTPPips / (decimal)passData.tSlPips;
+                        break;
+                    case 4:
+                        passData.tCurrentPrice = await GetPriceOfSelected((int)passData.tTradingPair);
+                        passData.tTPPips = (int)Math.Round(((decimal)(passData.tLimitOne - passData.tTp) * divideByNumber));
+                        passData.tSlPips = (int)Math.Round(((decimal)(passData.tSL - passData.tLimitOne) * divideByNumber));
+                        passData.tRiskRewardRadio = (decimal)passData.tTPPips / (decimal)passData.tSlPips;
+                        break;
+                }
+            
+            
+            
 
 
             

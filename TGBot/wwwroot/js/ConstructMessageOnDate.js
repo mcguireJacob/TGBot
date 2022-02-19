@@ -54,8 +54,9 @@ function constructWeeklyMessage() {
 
 
     var message = d.getFullYear() + " " + monthDateMessage + "%0D%0A %0D%0A" + winRatio + "%0D%0A %0D%0A" + tradesInRangeMessage + "%0D%0A %0D%0A" + totalPips
-
+    
     postAjax('https://api.telegram.org/bot5074478768:AAGgm7gcHeySMXo13qhw3fwwYHxx1F7S6eg/sendMessage?chat_id=@ShitTradinBot&text=' + message, {});
+    toastr.success("Message Sent")
 }
 
 

@@ -1,4 +1,6 @@
-﻿<form id="TradingForm" action="@Url.Action("SaveTheTrade")">
+﻿@model List<lTradePairLookup_List_Result>
+
+<form id="TradingForm" action="@Url.Action("SaveTheTrade")">
     <div class="row">
 
         <div class="col-lg-4">
@@ -19,8 +21,10 @@
             <label>Trading Pair</label>
             <select id="tradingPair" class="form-control" onchange="callForPrice()">
                 <option value="">Please Select</option>
-                <option value="1">EurUsd</option>
-                <option value="2">AudJpy</option>
+                @foreach(var pair in Model)
+            {
+                <option value="@pair.lTradePairLookupID">@pair.lTradePair</option>
+            }
             </select>
         </div>
         <div class="col-lg-4" id="LimitDiv" style="display:none">
