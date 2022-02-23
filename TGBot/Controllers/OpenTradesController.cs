@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -85,12 +87,30 @@ namespace TGBot.Controllers
 
             _Database.ManuallyCloseTrade_ByID(tID, closingPrice);
 
+
+            ProcessStartInfo pyArgs = new ProcessStartInfo();
+            var configuration = GetConfiguration();
+            //DEV
+            pyArgs.FileName = configuration.GetSection("python.exePath").Value;
+            pyArgs.Arguments = string.Format("{0} {1}", configuration.GetSection("pythonScript").Value, tID);
+
+            pyArgs.UseShellExecute = false;
+
+            Process py = Process.Start(pyArgs);
+
+
+
             await SendReplyToMessage(tID);
            
 
         }
+        public IConfigurationRoot GetConfiguration()
+        {
+            var build = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+            return build.Build();
+        }
 
-        
+
 
 
 

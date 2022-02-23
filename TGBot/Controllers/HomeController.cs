@@ -99,6 +99,21 @@ namespace TGBot.Controllers
             });
 
 
+         
+
+
+            ProcessStartInfo pyArgs = new ProcessStartInfo();
+
+            //DEV
+            pyArgs.FileName = configuration.GetSection("python.exePath").Value;
+            pyArgs.Arguments = string.Format("{0}", configuration.GetSection("pythonScript").Value);
+
+            pyArgs.UseShellExecute = false;
+            
+            Process p = Process.Start(pyArgs);
+                
+
+
 
 
 
@@ -123,14 +138,31 @@ namespace TGBot.Controllers
         {
 
             lTradePairLookup_GetApiLinkByID_Result api  = Database.lTradePairLookup_GetApiLinkByID(id).FirstOrDefault();
-
+            HttpResponseMessage yeet;
             HttpClient client = new HttpClient();
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, api.lApiLink);
             request.Headers.Clear();
             request.Headers.Add("x-api-key", "6CxtVp2Ng73DYJsDMlwQi7e7TMo9LTjB5QXTlmG7");
-            var yeet = await client.SendAsync(request);
+            
+            yeet = await client.SendAsync(request);
+          
+            
+            
+            
             var ok = yeet.Content;
             var oka = await yeet.Content.ReadAsStringAsync();
+            if(oka.Contains("Limit Exceeded"))
+            {
+                client = new HttpClient();
+                request = new HttpRequestMessage(HttpMethod.Get, api.lApiLink);
+                request.Headers.Clear();
+                request.Headers.Add("x-api-key", "wDgA1rmIJV2CJ635gIyZv54Rs4cOeyIU4rP5Kfsb");
+                yeet = await client.SendAsync(request);
+                ok = yeet.Content;
+                oka = await yeet.Content.ReadAsStringAsync();
+            }
+
+
             dynamic l = JSON.DeserializeObject(oka);
 
             
@@ -143,8 +175,7 @@ namespace TGBot.Controllers
 
         }
 
-
-        
+  
         
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
