@@ -3,7 +3,6 @@ from turtle import position
 from unicodedata import decimal
 import MetaTrader5 as mt
 import pandas as pd
-import plotly.express as px
 from datetime import datetime
 import pypyodbc as odbc
 import json
@@ -23,7 +22,8 @@ else:
     manuallyClosedTID = 0
 
 #opens or checks if client is open
-mt.initialize()
+didItitalize = mt.initialize()
+logging.warning(didItitalize)
 
 
 
@@ -183,7 +183,7 @@ def placeTrade():
     for acc in rows:
 
         loginBool = mt.login(acc[1], acc[2], acc[3])
-        
+        logging.warning(loginBool)
         print("Yup")
         slPips = trade[0][8]
         volume = (mt.account_info().equity * (float(acc[4]) /100 )) / slPips
