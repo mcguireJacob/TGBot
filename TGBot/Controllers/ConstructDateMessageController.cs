@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +8,7 @@ using TGBot.Helper;
 
 namespace TGBot.Controllers
 {
+    [Authorize]
     public class ConstructDateMessageController : Controller
     {
 
@@ -27,7 +29,7 @@ namespace TGBot.Controllers
             var fromDate = DateTime.Parse(from);
             var toDate = DateTime.Parse(to);
 
-            var list = _Database.TradeInfo_SearchByDate(fromDate, toDate);
+            var list = _Database.TradeInfo_SearchByDate(fromDate, toDate) ?? new List<TradeInfo_SearchByDate_Result>();
 
             return PartialView("_MessagesInDateRange", list);
         }

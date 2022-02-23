@@ -4,7 +4,7 @@ using System.Data.SqlClient;
 using JSON = Newtonsoft.Json.JsonConvert;
 using TGBot.Helper;
 
-//AUTO-GENERATED 1/22/2022 at 5:27 PM
+//AUTO-GENERATED 2/5/2022 at 1:00 PM
 //DO NOT ALTER THIS FILE
 //EXTEND THE CLASS IN A NEW PARTIAL CLASS INSTEAD
 namespace TGBot
@@ -30,6 +30,7 @@ namespace TGBot
 		public int tTelegramMessageID { get; set; }
 		public decimal? tRiskRewardRadio { get; set; }
 		public int? tManuallyClosedPips { get; set; }
+		public bool? tLimitOrderHit { get; set; }
 
 
 		/// <summary>

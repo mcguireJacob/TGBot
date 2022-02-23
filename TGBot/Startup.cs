@@ -28,6 +28,9 @@ namespace TGBot
         {
             services.AddControllersWithViews();
 
+            services.AddRazorPages();
+
+
 
             services.AddHelpers();
 
@@ -57,6 +60,7 @@ namespace TGBot
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -64,6 +68,7 @@ namespace TGBot
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
             });
         }
     }

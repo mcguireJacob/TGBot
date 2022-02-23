@@ -11,11 +11,11 @@
         <label class="label" style="font-weight:bold">To</label>
         <input class="form-control" id="toDate" onchange="getMessages()" type="date" />
     </div>
+    <div>
+        <label class="label" style="font-weight: bold; color: #222">|</label>
+        <button type="button" style="display:none" id="weeklyMessages" class="btn btn-primary form-control" onclick="constructWeeklyMessage()">Send Message</button>
+    </div>
 
-</div>
-
-<div id="messageConstructionDiv" class="row">
-    
 </div>
 
 <br />
@@ -23,9 +23,10 @@
 <br />
 
 <div id="trades">
-    
+
 </div>
 
 
 
 <script src="~/js/ConstructMessageOnDate.js"></script>
+<script src="~/js/site/toastr.js"></script>

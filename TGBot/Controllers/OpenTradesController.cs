@@ -1,6 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -10,12 +15,14 @@ using TGBot.ViewModels;
 
 namespace TGBot.Controllers
 {
+    [Authorize]
     public class OpenTradesController : Controller
     {
-        
+        private readonly IWebHostEnvironment webHostEnvironment;
         private ComplexEntity _Database;
-        public OpenTradesController(ComplexEntity Database)
+        public OpenTradesController(ComplexEntity Database, IWebHostEnvironment webHostEnvironment)
         {
+            this.webHostEnvironment = webHostEnvironment;
             _Database = Database;
         }
         public IActionResult Index()
@@ -29,9 +36,10 @@ namespace TGBot.Controllers
             var getInfoByID = _Database.TradeInfo_GetByID(tID).FirstOrDefault();
             
 
-            var controller = new HomeController(_Database);
+            var controller = new HomeController(_Database, webHostEnvironment);
 
             decimal priceNowDuringClose = await controller.GetPriceOfSelected((int)getInfoByID.tTradingPair);
+            
 
             int closingPrice = 0;
 
@@ -47,27 +55,62 @@ namespace TGBot.Controllers
                 case 2:
                     closingPrice = (int)Math.Round(((decimal)getInfoByID.tCurrentPrice - priceNowDuringClose) * 10000);
                     break;
+                case 3:
+                case 4:
+                    var processToClose = _Database.GetProcessID_ByTicketID(getInfoByID.tID);
+                    closingPrice = 0;
+                    if(processToClose.Count > 0)
+                    {
+                        Process[] p = Process.GetProcesses();
+                        foreach (var process in p)
+                        {
+                            if (process.Id == processToClose.FirstOrDefault().pProcessID)
+                            {
+                                process.Kill();
+                                break;
+                            }
+                        }
+
+                        if (getInfoByID.tLimitOrderHit != null && getInfoByID.tTradeType == 3)
+                        {
+                            closingPrice = (int)Math.Round((priceNowDuringClose - (decimal)getInfoByID.tLimitOne) * 10000);
+                        }
+
+                        if (getInfoByID.tLimitOrderHit != null && getInfoByID.tTradeType == 4)
+                        {
+                            closingPrice = (int)Math.Round(((decimal)getInfoByID.tLimitOne - priceNowDuringClose) * 10000);
+                        }
+                    }
+                    
+                    break;
             }
-
-
-
-           
 
             _Database.ManuallyCloseTrade_ByID(tID, closingPrice);
 
 
+            ProcessStartInfo pyArgs = new ProcessStartInfo();
+            var configuration = GetConfiguration();
+            //DEV
+            pyArgs.FileName = configuration.GetSection("python.exePath").Value;
+            pyArgs.Arguments = string.Format("{0} {1}", configuration.GetSection("pythonScript").Value, tID);
+
+            pyArgs.UseShellExecute = false;
+
+            Process py = Process.Start(pyArgs);
+
+
 
             await SendReplyToMessage(tID);
-            
-
-
-
-            
-
+           
 
         }
+        public IConfigurationRoot GetConfiguration()
+        {
+            var build = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+            return build.Build();
+        }
 
-        
+
 
 
 
