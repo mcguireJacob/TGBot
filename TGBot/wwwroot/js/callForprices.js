@@ -1,4 +1,4 @@
-﻿const { log } = require("node:console");
+﻿
 
 $(function () {
     disableAll()

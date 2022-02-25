@@ -26,10 +26,9 @@ namespace AutoTPSL
                  tID = args[0];
             }
 
-            
-            
 
-            
+
+
             try
             {
                 CheckIfHitTakeProfitOrStopLoss(tID);
@@ -178,11 +177,11 @@ namespace AutoTPSL
         public static void TPSL(string tID, int winLoss)
         {
             //Local Testing
-            var hardcodedPathToConsoleAPP = "C:\\Users\\Jacob\\Documents\\repo\\TGBotConsole\\AutoTPSL.exe";
+            //var hardcodedPathToConsoleAPP = "C:\\Users\\Jacob\\Documents\\repo\\TGBotConsole\\AutoTPSL.exe";
 
 
             //Deployment
-            //var hardcodedPathToConsoleAPP = "C:\\inetpub\\wwwroot\\TGBotConsole\\AutoTPSL.exe";
+            var hardcodedPathToConsoleAPP = "C:\\inetpub\\wwwroot\\TGBotConsole\\AutoTPSL.exe";
 
 
 
@@ -303,13 +302,13 @@ namespace AutoTPSL
             ProcessStartInfo pyArgs = new ProcessStartInfo();
 
             //DEV
-            pyArgs.FileName = "C:\\Users\\Jacob\\AppData\\Local\\Programs\\Python\\Python310\\python.exe";
-            pyArgs.Arguments = string.Format("{0} {1} {2}", "C:\\Users\\Jacob\\Documents\\repo\\TGBot\\GetPrices.py", pair, tID);
+            //pyArgs.FileName = "C:\\Users\\Jacob\\AppData\\Local\\Programs\\Python\\Python310\\python.exe";
+            //pyArgs.Arguments = string.Format("{0} {1} {2}", "C:\\Users\\Jacob\\Documents\\repo\\TGBot\\GetPrices.py", pair, tID);
 
             //PROD
 
-            //pyArgs.FileName = "C:\\Python\\python.exe";
-            //pyArgs.Arguments = string.Format("{0} {1} {2}", "C:\\inetpub\\wwwroot\\GetPrices.py", pair, tID);
+            pyArgs.FileName = "C:\\Python\\python.exe";
+            pyArgs.Arguments = string.Format("{0} {1} {2}", "C:\\inetpub\\wwwroot\\GetPrices.py", pair, tID);
 
 
 
@@ -401,8 +400,8 @@ namespace AutoTPSL
             {
 
 
-                //SqlConnection.ConnectionString = "Server=TGBOT\\SQLEXPRESS;Initial Catalog=Trades;User Id=sa;Password=sa";
-                SqlConnection.ConnectionString = "Server=localhost\\SQLEXPRESS;Initial Catalog=Trades;Trusted_Connection=True;";
+                SqlConnection.ConnectionString = "Server=TGBOT\\SQLEXPRESS;Initial Catalog=Trades;User Id=sa;Password=sa";
+                //SqlConnection.ConnectionString = "Server=localhost\\SQLEXPRESS;Initial Catalog=Trades;Trusted_Connection=True;";
 
 
 

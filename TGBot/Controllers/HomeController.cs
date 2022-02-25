@@ -105,8 +105,11 @@ namespace TGBot.Controllers
             ProcessStartInfo pyArgs = new ProcessStartInfo();
 
             //DEV
-            pyArgs.FileName = configuration.GetSection("python.exePath").Value;
+            pyArgs.FileName = configuration.GetSection("pythonexePath").Value;
             pyArgs.Arguments = string.Format("{0}", configuration.GetSection("pythonScript").Value);
+
+
+
 
             pyArgs.UseShellExecute = false;
             
