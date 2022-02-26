@@ -15,7 +15,7 @@ using TGBot.ViewModels;
 
 namespace TGBot.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Sauce")]
     public class OpenTradesController : Controller
     {
         private readonly IWebHostEnvironment webHostEnvironment;

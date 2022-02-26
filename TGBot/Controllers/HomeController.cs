@@ -17,7 +17,7 @@ using JSON = Newtonsoft.Json.JsonConvert;
 
 namespace TGBot.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Sauce")]
     public class HomeController : Controller
     {
 
@@ -30,7 +30,7 @@ namespace TGBot.Controllers
             this.webHostEnvironment = webHostEnvironment;
             this.Database = Database;
         }
-
+        
         public IActionResult Index()
         {
             List<lTradePairLookup_List_Result> TradePairsModel  = Database.lTradePairLookup_List();
