@@ -1,4 +1,43 @@
-﻿
+﻿@model BotUserVM
 
 
-<body>Whats good</body>
+<form>
+    <div class="row">
+        <input type="hidden" id="saveAccount" value="@Url.Action("SaveAccountProfile")" />
+        <input type="hidden" id="aID" value="@Model.Account_ByEmail_Result.aID"/>
+        <div class="col-lg-2">
+            <label class="label"  style="font-weight:bold">Account Login</label>
+            <input class="form-control" id="accountLogin" type="text" value="@Model.Account_ByEmail_Result.aAccountLogin"/>
+        </div>
+        <div class="col-lg-2">
+            <label class="label" style="font-weight:bold">Account Password</label>
+            <input class="form-control" id="accountPassword" value="@Model.Account_ByEmail_Result.aAccountPassword" />
+        </div>
+        <div class="col-lg-3">
+            <label class="label"  style="font-weight:bold">Account Server</label>
+            <select class="form-control" id="accountServer" style="color:black">
+                @foreach (var server in Model.ServerList)
+                {
+                    <option value="@server.sServerMetaTraderValue" selected="@(server.sServerMetaTraderValue == Model.Account_ByEmail_Result.aAccountServer)">@server.sServerName</option>
+                }
+            </select>
+        </div>
+        <div class="col-lg-2">
+            <label class="label"  style="font-weight:bold">Risk %</label>
+            <input class="form-control" id="riskPct" type="number" onkeyup="clearOther('pct'); setTwoNumberDecimal(this)"  value="@Model.Account_ByEmail_Result.aRiskPct"/>
+        </div>
+        <div class="col-lg-2">
+            <label class="label"  style="font-weight:bold">Fixed Lot Size</label>
+            <input class="form-control" id="fixedLotSize" type="number" onkeyup="clearOther('fixed'); setTwoNumberDecimal(this)"  value="@Model.Account_ByEmail_Result.aFixedLotSize"/>
+        </div> 
+    </div>
+    <button type="button" onclick="saveTradeInfo()">Click me</button>
+</form>
+
+
+
+@section Scripts{
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="~/js/BotUser.js"></script>
+}

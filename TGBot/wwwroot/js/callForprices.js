@@ -2,6 +2,12 @@
 
 $(function () {
     disableAll()
+    $("#tradingPair").select2();
+    $(".select2-selection--single").css("height", "2.1em")
+    $(".select2-selection__rendered").css("font-size", "1rem")
+    $(".select2-selection__rendered").css("margin-top", "0.2rem")
+    $(".select2-selection__arrow").css("margin-top", "0.3rem")
+    
 });
 
 function disableAll() {

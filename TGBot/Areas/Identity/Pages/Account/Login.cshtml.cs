@@ -113,7 +113,7 @@ namespace TGBot.Areas.Identity.Pages.Account
                     }
 
 
-                    
+                    _context.HttpContext.Session.SetString("userEmail", Input.Email);
                     var user = await _userManager.FindByEmailAsync(Input.Email);
                     var userRoleFromDB = _Database.GetUserRole_ByUserID(user.Id).FirstOrDefault();
                     string userRole = "";

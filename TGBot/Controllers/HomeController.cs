@@ -17,7 +17,7 @@ using JSON = Newtonsoft.Json.JsonConvert;
 
 namespace TGBot.Controllers
 {
-    [Authorize(Roles = "Sauce")]
+    [Authorize(Roles = "TraderAdmin")]
     public class HomeController : Controller
     {
 
