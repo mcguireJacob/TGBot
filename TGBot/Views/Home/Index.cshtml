@@ -18,8 +18,10 @@
         <div class="col-lg-4">
             <input type="hidden" id="ajacall" value="@Url.Action("getResults")" />
             <input hidden id="getPricey" value="@Url.Action("GetPriceOfSelected")" />
+            <input type="hidden" id="startPython" value="@Url.Action("StartPythonScriptToGetPrices")" />
+            <input type="hidden" id="getPriceOfSelected" value="@Url.Action("getPriceOfSelected")" />
             <label>Trading Pair</label>
-            <select id="tradingPair" class="form-control" onchange="callForPrice()">
+            <select id="tradingPair" class="form-control" onchange="getPriceOfSelected()">
                 <option value="">Please Select</option>
                 @foreach(var pair in Model)
             {

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -176,6 +177,67 @@ namespace TGBot.Controllers
             return p;
 
 
+        }
+
+
+
+
+
+
+
+        public void StartPythonScriptToGetPrices(string TradePair)
+        {
+            
+
+            var processToClose = Database.GetProcessesThatAreFromAdmin();
+            List<Process> listOfProcessIDs = new List<Process>();
+            if (processToClose.Count > 0)
+            {
+                Process[] pr = Process.GetProcesses();
+                foreach (var proc in processToClose)
+                {
+                    foreach (var process in pr)
+                    {
+                        if (process.Id == proc.pProcessID)
+                        {
+                            listOfProcessIDs.Add(process);
+                        }
+                    }
+
+                }
+
+                foreach (var procc in listOfProcessIDs)
+                {
+                     procc.Kill();
+                }
+                
+            }
+
+
+            Database.PriceOfSelected_Set(TradePair);
+
+
+            ProcessStartInfo pyArgs = new ProcessStartInfo();
+            var configuration = GetConfiguration();
+            pyArgs.FileName = configuration.GetSection("pythonexePath").Value;
+            pyArgs.Arguments = string.Format("{0}", configuration.GetSection("pythonGetPricesScript").Value);
+            Process p = Process.Start(pyArgs);
+
+            SetProcessID_Result.Parameters SP = new SetProcessID_Result.Parameters();
+            SP.pTradeID = 0;
+            SP.pProcessID = p.Id;
+            SP.pProcessAdminGetPrice = true;
+
+            Database.SetProcessID(SP);
+            
+        }
+
+
+        public decimal? getPriceOfSelected()
+        {
+            var price = Database.GetPriceOfSelected().FirstOrDefault().pPriceOfSelected;
+            
+            return price;
         }
 
   

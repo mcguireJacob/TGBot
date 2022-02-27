@@ -124,7 +124,7 @@ namespace TGBot.Areas.Identity.Pages.Account
                         
                     
 
-                    if (userRole == "Sauce")
+                    if (userRole == "TraderAdmin")
                     {
                         
                         await _userManager.AddToRoleAsync(user, "TraderAdmin");

@@ -14,6 +14,22 @@ namespace AutoTPSL
 {
     class Program
     {
+        //PROD
+        //private static string SQLConnection = "Server=TGBOT\\SQLEXPRESS;Initial Catalog=Trades;User Id=sa;Password=sa";
+        //private static string HardCodedPathToConsoleAPP = "C:\\inetpub\\wwwroot\\TGBotConsole\\AutoTPSL.exe";
+        //private static string PythonFileName = "C:\\Python\\python.exe";
+        //private static string PythonGetPrices = "C:\\inetpub\\wwwroot\\GetPrices.py";
+
+
+
+
+
+        //DEV
+        private static string SQLConnection = "Server=localhost\\SQLEXPRESS;Initial Catalog=Trades;Trusted_Connection=True;";
+        private static string HardCodedPathToConsoleAPP = "C:\\Users\\Jacob\\Documents\\repo\\TGBotConsole\\AutoTPSL.exe";
+        private static string PythonFileName = "C:\\Users\\Jacob\\AppData\\Local\\Programs\\Python\\Python310\\python.exe";
+        private static string PythonGetPrices = "C:\\Users\\Jacob\\Documents\\repo\\TGBot\\GetPrices.py";
+
         static void Main(string[] args)
         {
 
@@ -181,7 +197,7 @@ namespace AutoTPSL
 
 
             //Deployment
-            var hardcodedPathToConsoleAPP = "C:\\inetpub\\wwwroot\\TGBotConsole\\AutoTPSL.exe";
+            var hardcodedPathToConsoleAPP = Program.HardCodedPathToConsoleAPP;
 
 
 
@@ -219,6 +235,7 @@ namespace AutoTPSL
                     parameters.Clear();
                     parameters.Add(new SqlParameter("pTradeID", tID));
                     parameters.Add(new SqlParameter("pProcessID", buyNow.Id));
+                    parameters.Add(new SqlParameter("pProcessAdminGetPrice", false));
                     hitTheDB<SetProcessID_Result>("SetProcessID", parameters);
                     killPythonScript(tID, buyNow.Id);
                     break;
@@ -237,6 +254,7 @@ namespace AutoTPSL
                     parameters.Clear();
                     parameters.Add(new SqlParameter("pTradeID", tID));
                     parameters.Add(new SqlParameter("pProcessID", SellNow.Id));
+                    parameters.Add(new SqlParameter("pProcessAdminGetPrice", false));
                     hitTheDB<SetProcessID_Result>("SetProcessID", parameters);
                     killPythonScript(tID, SellNow.Id);
                     break;
@@ -307,8 +325,8 @@ namespace AutoTPSL
 
             //PROD
 
-            pyArgs.FileName = "C:\\Python\\python.exe";
-            pyArgs.Arguments = string.Format("{0} {1} {2}", "C:\\inetpub\\wwwroot\\GetPrices.py", pair, tID);
+            pyArgs.FileName = Program.PythonFileName;
+            pyArgs.Arguments = string.Format("{0} {1} {2}", Program.PythonGetPrices, pair, tID);
 
 
 
@@ -321,6 +339,7 @@ namespace AutoTPSL
                 List<SqlParameter> parameters = new List<SqlParameter>();
                 parameters.Add(new SqlParameter("pTradeID", tID));
                 parameters.Add(new SqlParameter("pProcessID", p.Id));
+                parameters.Add(new SqlParameter("pProcessAdminGetPrice", false));
                 hitTheDB<SetProcessID_Result>("SetProcessID", parameters);
             }
             catch (Exception e)
@@ -400,7 +419,7 @@ namespace AutoTPSL
             {
 
 
-                SqlConnection.ConnectionString = "Server=TGBOT\\SQLEXPRESS;Initial Catalog=Trades;User Id=sa;Password=sa";
+                SqlConnection.ConnectionString = Program.SQLConnection;
                 //SqlConnection.ConnectionString = "Server=localhost\\SQLEXPRESS;Initial Catalog=Trades;Trusted_Connection=True;";
 
 
@@ -531,6 +550,8 @@ namespace AutoTPSL
     {
         public int? pTradeID { get; set; }
         public int? pProcessID { get; set; }
+
+        public bool? pProcessAdminGetPrice { get; set; }
 
     }
 

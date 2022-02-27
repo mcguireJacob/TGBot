@@ -4,7 +4,7 @@ using System.Data.SqlClient;
 using JSON = Newtonsoft.Json.JsonConvert;
 using TGBot.Helper;
 
-//AUTO-GENERATED 2/26/2022 at 5:58 PM
+//AUTO-GENERATED 2/26/2022 at 7:55 PM
 //DO NOT ALTER THIS FILE
 //EXTEND THE CLASS IN A NEW PARTIAL CLASS INSTEAD
 namespace TGBot
@@ -21,11 +21,11 @@ namespace TGBot
 		public partial class Parameters
 		{
 			public int? aID { get; set; }
-			public string aAccountLogin { get; set; } 
+			public string aAccountLogin { get; set; }
 			public string aAccountPassword { get; set; }
 			public string aAccountServer { get; set; }
-			public string aRiskPct { get; set; }
-			public string aFixedLot { get; set; }
+			public decimal? aRiskPct { get; set; }
+			public decimal? aFixedLot { get; set; }
 			public string aAccountEmail { get; set; }
 			
 			/// <summary>
@@ -47,10 +47,10 @@ namespace TGBot
 		/// <param name="aAccountLogin">string</param>
 		/// <param name="aAccountPassword">string</param>
 		/// <param name="aAccountServer">string</param>
-		/// <param name="aRiskPct">string</param>
-		/// <param name="aFixedLot">string</param>
+		/// <param name="aRiskPct">decimal?</param>
+		/// <param name="aFixedLot">decimal?</param>
 		/// <param name="aAccountEmail">string</param>
-		public static List<SetOrUpdateAccount_Result> SetOrUpdateAccount(this ComplexEntity ctx, int? aID, string aAccountLogin, string aAccountPassword, string aAccountServer, string aRiskPct, string aFixedLot, string aAccountEmail)
+		public static List<SetOrUpdateAccount_Result> SetOrUpdateAccount(this ComplexEntity ctx, int? aID, string aAccountLogin, string aAccountPassword, string aAccountServer, decimal? aRiskPct, decimal? aFixedLot, string aAccountEmail)
 		{
 			List<SetOrUpdateAccount_Result> x = new List<SetOrUpdateAccount_Result>();
 			 List<SqlParameter> sqlParams = new List<SqlParameter>();
@@ -75,12 +75,12 @@ namespace TGBot
 				sqlParams.Add(new SqlParameter("@aAccountServer", aAccountServer));
 			}
 			
-			if (!string.IsNullOrEmpty(aRiskPct))
+			if (aRiskPct.HasValue)
 			{
 				sqlParams.Add(new SqlParameter("@aRiskPct", aRiskPct));
 			}
 			
-			if (!string.IsNullOrEmpty(aFixedLot))
+			if (aFixedLot.HasValue)
 			{
 				sqlParams.Add(new SqlParameter("@aFixedLot", aFixedLot));
 			}

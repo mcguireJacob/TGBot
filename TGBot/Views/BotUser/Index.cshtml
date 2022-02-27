@@ -18,13 +18,13 @@
             <select class="form-control" id="accountServer" style="color:black">
                 @foreach (var server in Model.ServerList)
                 {
-                    <option value="@server.sServerMetaTraderValue" selected="@(server.sServerMetaTraderValue == Model.Account_ByEmail_Result.aAccountServer)">@server.sServerName</option>
+                    <option value="@server.sID" selected="@(server.sID == Model.Account_ByEmail_Result.aID)">@server.sServerName</option>
                 }
             </select>
         </div>
         <div class="col-lg-2">
             <label class="label"  style="font-weight:bold">Risk %</label>
-            <input class="form-control" id="riskPct" type="number" onkeyup="clearOther('pct'); setTwoNumberDecimal(this)"  value="@Model.Account_ByEmail_Result.aRiskPct"/>
+            <input class="form-control" id="riskPct" type="number" onkeyup="clearOther('pct'); setTwoNumberDecimal(this)"  value="@(Model.Account_ByEmail_Result.aRiskPct != 0 ? Model.Account_ByEmail_Result.aRiskPct : "")"/>
         </div>
         <div class="col-lg-2">
             <label class="label"  style="font-weight:bold">Fixed Lot Size</label>

@@ -33,6 +33,8 @@ namespace TGBot.Controllers
             {
                 passData.aID = 0;
             }
+            passData.aFixedLot = Decimal.Parse(passData.aFixedLot.ToString());
+           
             passData.aAccountEmail = context.HttpContext.Session.GetString("userEmail");
             Database.SetOrUpdateAccount(passData);
 

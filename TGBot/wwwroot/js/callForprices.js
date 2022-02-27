@@ -74,6 +74,32 @@ function getPriceFromAPI() {
 
 
 
+function getPriceOfSelected() {
+    var TradePair = $("#tradingPair").val()
+    NK.Ajax.post($("#startPython").val(),
+        { TradePair: TradePair}
+    )
+    var UpdatePriceOnPage
+
+    clearInterval(UpdatePriceOnPage);
+
+    UpdatePriceOnPage = setInterval(DisplayPriceOnPage ,2000)
+
+}
+
+function DisplayPriceOnPage() {
+    NK.Ajax.post($("#getPriceOfSelected").val(),
+        {},
+        function (data) {
+            console.log(data);
+        }
+    )
+}
+
+
+
+
+
 function getThePrices(param) {
     var tradeType = $("#TradeTypeSelect").val()
     if (tradeType != 3 && tradeType != 4) {
