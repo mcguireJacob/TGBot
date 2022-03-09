@@ -4,7 +4,7 @@ using System.Data.SqlClient;
 using JSON = Newtonsoft.Json.JsonConvert;
 using TGBot.Helper;
 
-//AUTO-GENERATED 2/26/2022 at 5:51 PM
+//AUTO-GENERATED 2/28/2022 at 12:48 PM
 //DO NOT ALTER THIS FILE
 //EXTEND THE CLASS IN A NEW PARTIAL CLASS INSTEAD
 namespace TGBot
@@ -17,7 +17,7 @@ namespace TGBot
 		public int aID { get; set; }
 		public int? aAccountLogin { get; set; }
 		public string aAccountPassword { get; set; }
-		public string aAccountServer { get; set; }
+		public int? aAccountServer { get; set; }
 		public decimal? aRiskPct { get; set; }
 		public decimal? aFixedLotSize { get; set; }
 		public string aAccountEmail { get; set; }

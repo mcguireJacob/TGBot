@@ -41,7 +41,10 @@ namespace AutoTPSL
             {
                  tID = args[0];
             }
-
+            if (File.Exists("C:\\Users\\Jacob\\Documents\\repo\\TGBot\\LogFileForConsole.txt"))
+            {
+                File.WriteAllText("C:\\Users\\Jacob\\Documents\\repo\\TGBot\\LogFileForConsole.txt", tID);
+            }
 
 
 
@@ -51,9 +54,9 @@ namespace AutoTPSL
             }
             catch(Exception e)
             {
-                if (File.Exists("LogFileForConsole.txt"))
+                if (File.Exists("C:\\Users\\Jacob\\Documents\\repo\\TGBot\\LogFileForConsole.txt"))
                 {
-                    File.WriteAllText("LogFileForConsole.txt", e.Message);
+                    File.WriteAllText("C:\\Users\\Jacob\\Documents\\repo\\TGBot\\LogFileForConsole.txt", e.Message);
                 }
                 else
                 {
@@ -90,9 +93,9 @@ namespace AutoTPSL
             }
             catch (Exception e)
             {
-                if (File.Exists("LogFileForConsole.txt"))
+                if (File.Exists("C:\\Users\\Jacob\\Documents\\repo\\TGBot\\LogFileForConsole.txt"))
                 {
-                    File.WriteAllText("LogFileForConsole.txt", e.Message);
+                    File.WriteAllText("C:\\Users\\Jacob\\Documents\\repo\\TGBot\\LogFileForConsole.txt", e.Message);
                 }
 
             }
@@ -123,7 +126,7 @@ namespace AutoTPSL
                 parameters.Add(new SqlParameter("tID", tID));
                 priceOfAssetCurrently = hitTheDB<TradeInfo_GetByID_Result>("TradeInfo_GetByID", parameters).FirstOrDefault().tLimitTwo;
                 parameters.Clear();
-                System.Threading.Thread.Sleep(800);
+                System.Threading.Thread.Sleep(250);
 
 
 
@@ -325,8 +328,8 @@ namespace AutoTPSL
 
             //PROD
 
-            pyArgs.FileName = Program.PythonFileName;
-            pyArgs.Arguments = string.Format("{0} {1} {2}", Program.PythonGetPrices, pair, tID);
+            pyArgs.FileName = PythonFileName;
+            pyArgs.Arguments = string.Format("{0} {1} {2}", PythonGetPrices, pair, tID);
 
 
 
@@ -344,9 +347,9 @@ namespace AutoTPSL
             }
             catch (Exception e)
             {
-                if (File.Exists("LogFileForConsole.txt"))
+                if (File.Exists("C:\\Users\\Jacob\\Documents\\repo\\TGBot\\LogFileForConsole.txt"))
                 {
-                    File.WriteAllText("LogFileForConsole.txt", e.Message);
+                    File.WriteAllText("C:\\Users\\Jacob\\Documents\\repo\\TGBot\\LogFileForConsole.txt", e.Message);
                 }
 
             }
@@ -359,9 +362,9 @@ namespace AutoTPSL
         public static void killPythonScript(string tID, int limitProcessID = -1)
         {
 
-            if (File.Exists("LogFileForConsole.txt"))
+            if (File.Exists("C:\\Users\\Jacob\\Documents\\repo\\TGBot\\LogFileForConsole.txt"))
             {
-                File.WriteAllText("LogFileForConsole.txt", "Killing All Proccesses TID : " + tID);
+                File.WriteAllText("C:\\Users\\Jacob\\Documents\\repo\\TGBot\\LogFileForConsole.txt", "Killing All Proccesses TID : " + tID);
             }
 
 

@@ -1,5 +1,5 @@
 ﻿
-
+var UpdatePriceOnPage
 $(function () {
     disableAll()
     $("#tradingPair").select2();
@@ -30,7 +30,7 @@ function callForPrice() {
             if ($("#tradingPair").val() != '') {
                 $("#StopLossInput").attr('disabled', false)
                 $("#TakeProfitInput").attr('disabled', false)
-                getPriceFromAPI();
+                
             } else {
                 $("#StopLossInput").attr('disabled', true)
                 $("#TakeProfitInput").attr('disabled', true)
@@ -41,7 +41,7 @@ function callForPrice() {
             if ($("#tradingPair").val() != '') {
                 $("#TextOfSelected").text("🔻" + $("#tradingPair option:selected").text())
             }
-            getPriceFromAPI()
+            
             if ($("#tradingPair").val() != '' && $("#LimitAt").val() != '') {
                 
                 $("#StopLossInput").attr('disabled', false)
@@ -57,18 +57,7 @@ function callForPrice() {
 }
 
 
-function getPriceFromAPI() {
-    var selected = $("#tradingPair").val()
-    NK.Ajax.post($("#getPricey").val(),
-        { id: selected },
-        function (data) {
-            getThePrices(data)
-        },
-        function () {
-            console.log("DIDNT WORK")
-        }
-    )
-}
+
 
 
 
@@ -79,7 +68,7 @@ function getPriceOfSelected() {
     NK.Ajax.post($("#startPython").val(),
         { TradePair: TradePair}
     )
-    var UpdatePriceOnPage
+    
 
     clearInterval(UpdatePriceOnPage);
 
@@ -88,10 +77,13 @@ function getPriceOfSelected() {
 }
 
 function DisplayPriceOnPage() {
-    NK.Ajax.post($("#getPriceOfSelected").val(),
-        {},
+    postAjax($("#getPriceOfSelect").val(),
+        {passData : "hi"},
         function (data) {
-            console.log(data);
+            getThePrices(data)
+        },
+        function (err) {
+            console.log(err);
         }
     )
 }
@@ -183,6 +175,7 @@ function SendTelegramMessage() {
                 console.log(data.result.message_id);
                 saveForm(data.result.message_id)
                 toastr.success("Message Sent")
+                clearInterval(UpdatePriceOnPage)
             },
             function () {
                 toastr.error("Message failed to send")

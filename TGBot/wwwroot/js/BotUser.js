@@ -31,6 +31,7 @@ function saveTradeInfo() {
     NK.Ajax.post($("#saveAccount").val(),
         payload
     )
+    toastr.success("Account Details Saved")
 
 
 }
