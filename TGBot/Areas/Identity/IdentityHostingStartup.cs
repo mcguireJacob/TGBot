@@ -1,5 +1,7 @@
 ﻿using System;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
@@ -20,14 +22,25 @@ namespace TGBot.Areas.Identity
                     options.UseSqlServer(
                         context.Configuration.GetConnectionString("TGBotDbContextConnection")));
 
-                services.AddDefaultIdentity<ApplicationUser>(options => {
+                
+
+                services.AddDefaultIdentity<ApplicationUser>(options =>
+                {
                     options.SignIn.RequireConfirmedAccount = true;
                     options.Password.RequireLowercase = false;
                     options.Password.RequireUppercase = false;
                     
-                    })
+                    
+
+                })
+                .AddRoles<IdentityRole>()
                     .AddEntityFrameworkStores<TGBotDbContext>();
+
+                
+
             });
+
+
         }
     }
 }

@@ -1,8 +1,17 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using TGBot.Areas.Identity.Data
+@using TGBot.Helper
+@using Microsoft.AspNetCore.Http
 
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
+@inject IHttpContextAccessor  context
+
+@{
+    var userRole = context.HttpContext.Session.GetString("UserRole");
+
+}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,41 +27,56 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm  mb-3" style="background-color: #222 !important">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">TGBot</a>
+                @if (userRole == "TraderAdmin")
+                {
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">TGBot</a>
+                }
+                else
+                {
+                    <a class="navbar-brand"  asp-action="Index">TGBot</a>
+                }
+
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent" style="background-color: #aaa !important"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <i class="fa-solid fa-bars"></i>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between" >
-                    
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+
                     <ul class="navbar-nav flex-grow-1">
-                        @if (SignInManager.IsSignedIn(User))
+
+                        @if (userRole == "TraderAdmin")
                         {
-                            <li class="nav-item">
-                                <a class="nav-link " asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link " asp-area="" asp-controller="OpenTrades" asp-action="Index">Open Trades</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link " asp-area="" asp-controller="ConstructDateMessage" asp-action="Index">Message based off Dates</a>
-                            </li>
+                            if (SignInManager.IsSignedIn(User))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link " asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link " asp-area="" asp-controller="OpenTrades" asp-action="Index">Open Trades</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link " asp-area="" asp-controller="ConstructDateMessage" asp-action="Index">Message based off Dates</a>
+                                </li>
+                            }
                         }
-                        </ul>
-                    
+
+
+
+                    </ul>
+
                     <partial name="_LoginPartial.cshtml" />
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container" >
+    <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
 
-    
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>

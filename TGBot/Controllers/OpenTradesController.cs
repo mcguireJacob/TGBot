@@ -15,7 +15,7 @@ using TGBot.ViewModels;
 
 namespace TGBot.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "TraderAdmin")]
     public class OpenTradesController : Controller
     {
         private readonly IWebHostEnvironment webHostEnvironment;
@@ -37,23 +37,31 @@ namespace TGBot.Controllers
             
 
             var controller = new HomeController(_Database, webHostEnvironment);
-
-            decimal priceNowDuringClose = await controller.GetPriceOfSelected((int)getInfoByID.tTradingPair);
+            decimal priceNowDuringClose = (decimal)getInfoByID.tCurrentPrice;
+            if (getInfoByID.tLimitTwo != null)
+            {
+                priceNowDuringClose = (decimal)getInfoByID.tLimitTwo;
+            }
+            
+            
             
 
             int closingPrice = 0;
 
-           
-
+            var multiplyByNumber = 100;
+            if (getInfoByID.tTradingPair == 13)
+            {
+                multiplyByNumber = 10;
+            }
 
             //TODO get the pip win or lost -
             switch (getInfoByID.tTradeType)
             {
                 case 1:
-                    closingPrice = (int)Math.Round((priceNowDuringClose - (decimal)getInfoByID.tCurrentPrice) * 10000);
+                    closingPrice = (int)Math.Round((priceNowDuringClose - (decimal)getInfoByID.tCurrentPrice) * multiplyByNumber);
                     break;
                 case 2:
-                    closingPrice = (int)Math.Round(((decimal)getInfoByID.tCurrentPrice - priceNowDuringClose) * 10000);
+                    closingPrice = (int)Math.Round(((decimal)getInfoByID.tCurrentPrice - priceNowDuringClose) * multiplyByNumber);
                     break;
                 case 3:
                 case 4:
@@ -73,12 +81,12 @@ namespace TGBot.Controllers
 
                         if (getInfoByID.tLimitOrderHit != null && getInfoByID.tTradeType == 3)
                         {
-                            closingPrice = (int)Math.Round((priceNowDuringClose - (decimal)getInfoByID.tLimitOne) * 10000);
+                            closingPrice = (int)Math.Round((priceNowDuringClose - (decimal)getInfoByID.tLimitOne) * multiplyByNumber);
                         }
 
                         if (getInfoByID.tLimitOrderHit != null && getInfoByID.tTradeType == 4)
                         {
-                            closingPrice = (int)Math.Round(((decimal)getInfoByID.tLimitOne - priceNowDuringClose) * 10000);
+                            closingPrice = (int)Math.Round(((decimal)getInfoByID.tLimitOne - priceNowDuringClose) * multiplyByNumber);
                         }
                     }
                     
@@ -91,7 +99,7 @@ namespace TGBot.Controllers
             ProcessStartInfo pyArgs = new ProcessStartInfo();
             var configuration = GetConfiguration();
             //DEV
-            pyArgs.FileName = configuration.GetSection("python.exePath").Value;
+            pyArgs.FileName = configuration.GetSection("pythonexePath").Value;
             pyArgs.Arguments = string.Format("{0} {1}", configuration.GetSection("pythonScript").Value, tID);
 
             pyArgs.UseShellExecute = false;

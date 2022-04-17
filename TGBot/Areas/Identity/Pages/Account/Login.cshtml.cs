@@ -12,6 +12,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using TGBot.Areas.Identity.Data;
+using TGBot.Helper;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 
 namespace TGBot.Areas.Identity.Pages.Account
 {
@@ -21,14 +25,23 @@ namespace TGBot.Areas.Identity.Pages.Account
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly ComplexEntity _Database;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IHttpContextAccessor _context;
 
         public LoginModel(SignInManager<ApplicationUser> signInManager, 
             ILogger<LoginModel> logger,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            ComplexEntity Database,
+            RoleManager<IdentityRole> roleManager,
+            IHttpContextAccessor context)
         {
+            _context = context;
+            _roleManager = roleManager;
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            _Database = Database;
         }
 
         [BindProperty]
@@ -90,8 +103,44 @@ namespace TGBot.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User logged in.");
-                    return LocalRedirect(returnUrl);
+                    bool x = await _roleManager.RoleExistsAsync("TraderAdmin");
+                    if (!x)
+                    {
+                        var role = new IdentityRole();
+                        role.Name = "TraderAdmin";
+                        await _roleManager.CreateAsync(role);
+
+                    }
+
+
+                    _context.HttpContext.Session.SetString("userEmail", Input.Email);
+                    var user = await _userManager.FindByEmailAsync(Input.Email);
+                    var userRoleFromDB = _Database.GetUserRole_ByUserID(user.Id).FirstOrDefault();
+                    string userRole = "";
+                    if(userRoleFromDB != null)
+                    {
+                        userRole = userRoleFromDB.Name;
+                    }
+                        
+                    
+
+                    if (userRole == "TraderAdmin")
+                    {
+                        
+                        await _userManager.AddToRoleAsync(user, "TraderAdmin");
+                        var ok = await _userManager.GetRolesAsync(user);
+                        _context.HttpContext.Session.SetString("UserRole", "TraderAdmin");
+                        
+                        
+                        _logger.LogInformation("User logged in.");
+                        return LocalRedirect(returnUrl);
+                    }
+                    else
+                    {
+                        
+                        return LocalRedirect(returnUrl+"BotUser");
+                    }
+
                 }
                 if (result.RequiresTwoFactor)
                 {

@@ -1,7 +1,13 @@
-﻿const { log } = require("node:console");
-
+﻿
+var UpdatePriceOnPage
 $(function () {
     disableAll()
+    $("#tradingPair").select2();
+    $(".select2-selection--single").css("height", "2.1em")
+    $(".select2-selection__rendered").css("font-size", "1rem")
+    $(".select2-selection__rendered").css("margin-top", "0.2rem")
+    $(".select2-selection__arrow").css("margin-top", "0.3rem")
+    
 });
 
 function disableAll() {
@@ -24,7 +30,7 @@ function callForPrice() {
             if ($("#tradingPair").val() != '') {
                 $("#StopLossInput").attr('disabled', false)
                 $("#TakeProfitInput").attr('disabled', false)
-                getPriceFromAPI();
+                
             } else {
                 $("#StopLossInput").attr('disabled', true)
                 $("#TakeProfitInput").attr('disabled', true)
@@ -35,7 +41,7 @@ function callForPrice() {
             if ($("#tradingPair").val() != '') {
                 $("#TextOfSelected").text("🔻" + $("#tradingPair option:selected").text())
             }
-            getPriceFromAPI()
+            
             if ($("#tradingPair").val() != '' && $("#LimitAt").val() != '') {
                 
                 $("#StopLossInput").attr('disabled', false)
@@ -51,15 +57,33 @@ function callForPrice() {
 }
 
 
-function getPriceFromAPI() {
-    var selected = $("#tradingPair").val()
-    NK.Ajax.post($("#getPricey").val(),
-        { id: selected },
+
+
+
+
+
+
+function getPriceOfSelected() {
+    var TradePair = $("#tradingPair").val()
+    NK.Ajax.post($("#startPython").val(),
+        { TradePair: TradePair}
+    )
+    
+
+    clearInterval(UpdatePriceOnPage);
+
+    UpdatePriceOnPage = setInterval(DisplayPriceOnPage ,2000)
+
+}
+
+function DisplayPriceOnPage() {
+    postAjax($("#getPriceOfSelect").val(),
+        {passData : "hi"},
         function (data) {
             getThePrices(data)
         },
-        function () {
-            console.log("DIDNT WORK")
+        function (err) {
+            console.log(err);
         }
     )
 }
@@ -151,6 +175,7 @@ function SendTelegramMessage() {
                 console.log(data.result.message_id);
                 saveForm(data.result.message_id)
                 toastr.success("Message Sent")
+                clearInterval(UpdatePriceOnPage)
             },
             function () {
                 toastr.error("Message failed to send")

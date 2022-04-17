@@ -8,7 +8,7 @@ using TGBot.Helper;
 
 namespace TGBot.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "TraderAdmin")]
     public class ConstructDateMessageController : Controller
     {
 
