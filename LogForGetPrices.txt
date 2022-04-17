@@ -1,0 +1,69 @@
+root - WARNING - imports work
+root - WARNING - imports work
+FXCM - WARNING - Default account set to 1728929, to change use set_default_account().
+FXCM - ERROR - Server reports an error: {'executed': False, 'error': ' \nORA-06512: at "CFD_U10D1.API", line 1177\nORA-06512: at line 1\n'}.
+FXCM - ERROR - URL: https://api-demo.fxcm.com:443/trading/update_subscriptions
+FXCM - ERROR - Headers: {'User-Agent': 'request', 'Accept-Encoding': 'gzip, deflate', 'Accept': 'application/json', 'Connection': 'keep-alive', 'Authorization': 'Bearer CLF1Dldy_E9UOwaAASJ_397c1c5608318167aad85f88f6c96cfa2c368e8a', 'Content-Type': 'application/x-www-form-urlencoded', 'Content-Length': '26'}
+FXCM - ERROR - Params: {'symbol': 'ACA.fr', 'visible': 'true'}
+FXCM - ERROR - Bearer token: Bearer CLF1Dldy_E9UOwaAASJ_397c1c5608318167aad85f88f6c96cfa2c368e8a
+FXCM - ERROR - Connection status: established
+FXCM - ERROR - Socket session id: CLF1Dldy_E9UOwaAASJ_
+FXCM - ERROR - Can not parse server answer to json object: {"response":{"executed":false,"error":" \nORA-06512: at \"CFD_U10D1.API\", line 1177\nORA-06512: at line 1\n"}}.
+FXCM - ERROR - Server reports an error: {'executed': False, 'error': ' \nORA-06512: at "CFD_U10D1.API", line 1177\nORA-06512: at line 1\n'}.
+FXCM - ERROR - URL: https://api-demo.fxcm.com:443/trading/update_subscriptions
+FXCM - ERROR - Headers: {'User-Agent': 'request', 'Accept-Encoding': 'gzip, deflate', 'Accept': 'application/json', 'Connection': 'keep-alive', 'Authorization': 'Bearer CLF1Dldy_E9UOwaAASJ_397c1c5608318167aad85f88f6c96cfa2c368e8a', 'Content-Type': 'application/x-www-form-urlencoded', 'Content-Length': '27'}
+FXCM - ERROR - Params: {'symbol': 'MVRS.us', 'visible': 'true'}
+FXCM - ERROR - Bearer token: Bearer CLF1Dldy_E9UOwaAASJ_397c1c5608318167aad85f88f6c96cfa2c368e8a
+FXCM - ERROR - Connection status: established
+FXCM - ERROR - Socket session id: CLF1Dldy_E9UOwaAASJ_
+FXCM - ERROR - Can not parse server answer to json object: {"response":{"executed":false,"error":" \nORA-06512: at \"CFD_U10D1.API\", line 1177\nORA-06512: at line 1\n"}}.
+root - WARNING - GBP/JPY
+root - WARNING - 8
+root - WARNING - 151.937
+root - WARNING - Im in HEre 2222
+root - WARNING - Sucess
+root - WARNING - 151.937
+root - WARNING - Im in HEre 2222
+root - WARNING - Sucess
+root - WARNING - 151.936
+root - WARNING - Im in HEre 2222
+root - WARNING - Sucess
+root - WARNING - 151.937
+root - WARNING - Im in HEre 2222
+root - WARNING - Sucess
+root - WARNING - 151.93800000000002
+root - WARNING - Im in HEre 2222
+root - WARNING - Sucess
+root - WARNING - 151.939
+root - WARNING - Im in HEre 2222
+root - WARNING - Sucess
+root - WARNING - 151.94
+root - WARNING - Im in HEre 2222
+root - WARNING - Sucess
+root - WARNING - 151.939
+root - WARNING - Im in HEre 2222
+root - WARNING - Sucess
+root - WARNING - 151.939
+root - WARNING - Im in HEre 2222
+root - WARNING - Sucess
+root - WARNING - 151.937
+root - WARNING - Im in HEre 2222
+root - WARNING - Sucess
+root - WARNING - 151.935
+root - WARNING - Im in HEre 2222
+root - WARNING - Sucess
+root - WARNING - 151.935
+root - WARNING - Im in HEre 2222
+root - WARNING - Sucess
+root - WARNING - 151.936
+root - WARNING - Im in HEre 2222
+root - WARNING - Sucess
+root - WARNING - 151.936
+root - WARNING - Im in HEre 2222
+root - WARNING - Sucess
+root - WARNING - 151.937
+root - WARNING - Im in HEre 2222
+root - WARNING - Sucess
+root - WARNING - 151.936
+root - WARNING - Im in HEre 2222
+root - WARNING - Sucess

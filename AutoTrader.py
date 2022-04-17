@@ -1,14 +1,24 @@
-from pickle import NONE
-from turtle import position
-from unicodedata import decimal
-import MetaTrader5 as mt
-import pandas as pd
-from datetime import datetime
-import pypyodbc as odbc
-import json
-import sys
-from decimal import Decimal
-import logging
+from cgitb import enable
+
+
+try:
+    from pickle import NONE
+    from turtle import position
+    from unicodedata import decimal
+    import MetaTrader5 as mt
+    import pandas as pd
+    from datetime import datetime
+    import pypyodbc as odbc
+    import json
+    import sys
+    import time
+    from decimal import Decimal
+    import logging
+    logging.basicConfig(filename='LogForAutoTrader.txt', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
+    logging.warning('imports work')
+except Exception as e:
+    logging.basicConfig(filename='LogForAutoTrader.txt', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
+    logging.warning('imports blow up')
 
 
 logging.basicConfig(filename='LogForAutoTrader.txt', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
@@ -39,6 +49,7 @@ conn_string = f"""
     Server={SERVER_NAME};
     Database={DATABASE_NAME};
     Trust_Connection=yes;
+    MultipleActiveResultSets=true;
     Uid=sa;
     Pwd=sa;
 """
@@ -132,6 +143,10 @@ getAccountTrade_statement = """
 """
 
 
+getAccountServerByServerID_statement = """
+     select * from [Servers] where sid = ?
+"""
+
 
 try:
     cursor.execute(getTradePair_statement, [trade[0][2]])
@@ -153,11 +168,6 @@ tradeType = {1: mt.ORDER_TYPE_BUY,
              2: mt.ORDER_TYPE_SELL,
              3: mt.ORDER_TYPE_BUY_LIMIT,
              4: mt.ORDER_TYPE_SELL_LIMIT}
-print("tradeType")
-print(tradeType[1])
-print(tradeType[2])
-print(tradeType[3])
-print(tradeType[4])
 
 tradePair = tradePair[0][1]
 tradeType = tradeType[trade[0][1]]
@@ -182,23 +192,54 @@ print(tradePair)
 def placeTrade():
     for acc in rows:
 
-        loginBool = mt.login(acc[1], acc[2], acc[3])
+        try:
+            cursor.execute(getAccountServerByServerID_statement, [acc[3]])
+            server = cursor.fetchall()
+            print(server[0][2])
+        except Exception as e:
+            cursor.rollback()
+            print(e.value)
+            print("trans rollback")
+        else:
+            print("success")
+            cursor.commit()
+
+
+
+
+        loginBool = mt.login(acc[1], acc[2], server[0][2])
+        if(loginBool == False):
+            continue
         logging.warning(loginBool)
+        
         print("Yup")
         slPips = trade[0][8]
-        volume = (mt.account_info().equity * (float(acc[4]) /100 )) / slPips
-        volume = float(str(round(volume, 2)))
+        volume = 0
+        
+        if(acc[4] is None):
+            volume = acc[5]
+        else:
+            divider = 1000
+            volume = (mt.account_info().equity * (float(acc[4]) /divider )) / slPips 
 
+            print(volume)
+            
         
+
+        volume = float(str(round(volume, 2)))
+        serverchar = ""
+        if(server[0][3] is not None):
+            serverchar = server[0][3]
         
+        mt.symbol_select(tradePair + serverchar, enable)
         if(tradeType < 2):
 
             request = {
             "action": mt.TRADE_ACTION_DEAL,
-            "symbol": tradePair + ".a",
+            "symbol": tradePair + serverchar,
             "volume": volume,
             "type": tradeType,
-            "price": mt.symbol_info_tick(tradePair + ".a").ask,
+            "price": mt.symbol_info_tick(tradePair + serverchar).ask,
             "sl": SL,
             "tp": TP,
             "deviation": 20,
@@ -210,7 +251,7 @@ def placeTrade():
         else:
             request = {
             "action": mt.TRADE_ACTION_PENDING,
-            "symbol": tradePair + ".a",
+            "symbol": tradePair + serverchar,
             "volume": volume,
             "type": tradeType,
             "price": float(trade[0][4]),
@@ -243,9 +284,23 @@ def placeTrade():
 
 def closeTrade():
     for acc in rows:
-        loginBool = mt.login(acc[1], acc[2], acc[3])
 
+        try:
+            cursor.execute(getAccountServerByServerID_statement, [acc[3]])
+            server = cursor.fetchall()
+            print(server[0][2])
+        except Exception as e:
+            cursor.rollback()
+            print(e.value)
+            print("trans rollback")
+        else:
+            print("success")
+            cursor.commit()
 
+        loginBool = mt.login(acc[1], acc[2], server[0][2])
+        if(loginBool == False):
+            continue
+        
         try:
             cursor.execute(getAccountTrade_statement, [manuallyClosedTID, mt.account_info().login])
             accountTrades = cursor.fetchall()
@@ -262,18 +317,28 @@ def closeTrade():
                           1: 0,
                           2: 2,
                           3: 3}
+        
         print(tradeTypeClose[accountTrades[0][5]] )
         tradeTypeClose = tradeTypeClose[accountTrades[0][5]] 
         print(tradeTypeClose)
         print(accountTrades[0][5])
+
+
+
+        serverchar = ""
+        if(server[0][3] is not None):
+            serverchar = server[0][3]
+        
+
+
         if tradeTypeClose < 2:
             request = {
                 "action": mt.TRADE_ACTION_DEAL,
-                "symbol": tradePair + ".a",
+                "symbol": tradePair + serverchar,
                 "volume": accountTrades[0][2],
                 "type": tradeTypeClose,
                 "position": accountTrades[0][1],
-                "price": mt.symbol_info_tick(tradePair + ".a").ask,
+                "price": mt.symbol_info_tick(tradePair + serverchar).ask,
                 "sl": 0.0,
                 "tp": 0.0,
                 "deviation": 20,
@@ -310,4 +375,8 @@ def closeTrade():
 if(manuallyClosedTID != 0):
     closeTrade()
 else:
-    placeTrade()
+    try:
+        placeTrade()
+    except Exception as e:
+        print(e)
+        logging.warning(e)
